@@ -66,5 +66,5 @@ class Export(GlancesExport):
 
         # Export to HTTP
         print data
-        r = requests.post('http://127.0.0.1:8000/v1/glances', data=json.dumps(data))
+        #r = requests.post('http://127.0.0.1:8000/v1/glances', data=json.dumps(data))
         #r = requests.post('http://127.0.0.1:8000/v1/glances', data=json.dumps(plugins))
