@@ -88,4 +88,5 @@ class Export(GlancesExport):
                     data[plugin] = all_stats[i]
 
         # Export to HTTP
-        r = requests.post(self.http_endpoint, data=json.dumps(data), headers=self.headers)
+        data['metadata'] = self.headers
+        r = requests.post(self.http_endpoint, json=data, headers=self.headers)
