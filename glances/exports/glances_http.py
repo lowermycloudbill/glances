@@ -54,6 +54,8 @@ class Export(GlancesExport):
         self.availability_zone = config.get('CloudProvider','AvailabilityZone')
 
         headers = {
+          'apikey' : self.api_key,
+          'host' : 'development-metrics.lowermycloudbill.com',
           'version' : self.version,
           'demi-code' : self.demi_code,
           'instance-id' : self.instance_id,
@@ -86,7 +88,4 @@ class Export(GlancesExport):
                     data[plugin] = all_stats[i]
 
         # Export to HTTP
-        print data
-        print self.headers
-        #r = requests.post('http://127.0.0.1:8000/v1/glances', data=json.dumps(data))
-        #r = requests.post('http://127.0.0.1:8000/v1/glances', data=json.dumps(plugins))
+        r = requests.post(self.http_endpoint, data=json.dumps(data), headers=self.headers)
