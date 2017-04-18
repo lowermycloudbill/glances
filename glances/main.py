@@ -173,7 +173,7 @@ Examples of use:
                             dest='path_graph', help='set the export path for graphs (default is {})'.format(tempfile.gettempdir()))
         parser.add_argument('--export-csv', default=None,
                             dest='export_csv', help='export stats to a CSV file')
-        parser.add_argument('--export-http', default=None,
+        parser.add_argument('--export-http', action='store_true',
                             dest='export_http', help='export stats to a HTTP endpoint')
         parser.add_argument('--export-opentsdb', action='store_true', default=False,
                             dest='export_opentsdb', help='export stats to an OpenTSDB server (potsdb lib needed)')

@@ -24,11 +24,12 @@ import sys
 import time
 import json
 import requests
+import ConfigParser
 
+from glances import __version__
 from glances.compat import PY3, iterkeys, itervalues
 from glances.logger import logger
 from glances.exports.glances_export import GlancesExport
-
 
 class Export(GlancesExport):
 
@@ -40,6 +41,26 @@ class Export(GlancesExport):
 
         # CSV file name
         #self.http_endpoint = args.export_http
+        self.version = __version__
+        #parse our config file
+        config = ConfigParser.RawConfigParser()
+        config.read('/etc/lowermycloudbill/lowermycloudbill.conf')
+        self.api_key = config.get('LowerMyCloudBill','APIKey')
+        self.http_endpoint = config.get('LowerMyCloudBill','URL')
+        #get instance specific information
+        self.demi_code = config.get('CloudProvider','DemideCode')
+        self.instance_id = config.get('CloudProvider','InstanceID')
+        self.instance_type = config.get('CloudProvider','InstanceType')
+        self.availability_zone = config.get('CloudProvider','AvailabilityZone')
+
+        headers = {
+          'version' : self.version,
+          'demi-code' : self.demi_code,
+          'instance-id' : self.instance_id,
+          'instance-type' : self.instance_type,
+          'avilability-zone' : self.availability_zone
+        }
+        self.headers = headers
 
     def update(self, stats):
         """Update stats in the CSV output file."""
@@ -66,5 +87,6 @@ class Export(GlancesExport):
 
         # Export to HTTP
         print data
+        print self.headers
         #r = requests.post('http://127.0.0.1:8000/v1/glances', data=json.dumps(data))
         #r = requests.post('http://127.0.0.1:8000/v1/glances', data=json.dumps(plugins))
