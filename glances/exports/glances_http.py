@@ -53,15 +53,22 @@ class Export(GlancesExport):
         self.instance_type = config.get('CloudProvider','InstanceType')
         self.availability_zone = config.get('CloudProvider','AvailabilityZone')
 
-        headers = {
+        metadata = {
+          #so we actually know which user is sending us this data
           'apikey' : self.api_key,
-          'host' : 'development-metrics.lowermycloudbill.com',
           'version' : self.version,
           'demi-code' : self.demi_code,
           'instance-id' : self.instance_id,
           'instance-type' : self.instance_type,
           'avilability-zone' : self.availability_zone
         }
+
+        headers = {
+          'apikey' : self.api_key,
+          'host' : 'development-metrics.lowermycloudbill.com'
+        }
+
+        self.metadata = metadata
         self.headers = headers
 
     def update(self, stats):
@@ -88,5 +95,5 @@ class Export(GlancesExport):
                     data[plugin] = all_stats[i]
 
         # Export to HTTP
-        data['metadata'] = self.headers
+        data['metadata'] = self.metadata
         r = requests.post(self.http_endpoint, json=data, headers=self.headers)
