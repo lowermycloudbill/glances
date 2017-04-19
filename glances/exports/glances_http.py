@@ -25,6 +25,7 @@ import time
 import json
 import requests
 import ConfigParser
+from numbers import Number
 
 from glances import __version__
 from glances.compat import PY3, iterkeys, itervalues
@@ -71,29 +72,39 @@ class Export(GlancesExport):
         self.metadata = metadata
         self.headers = headers
 
-    def update(self, stats):
-        """Update stats in the CSV output file."""
-        # Get the stats
-        all_stats = stats.getAllExports()
-        plugins = stats.getAllPlugins()
+        self.export_enable = True
 
-        csv_data = [time.strftime('%Y-%m-%d %H:%M:%S')]
-        data = {'ts' : time.strftime('%Y-%m-%d %H:%M:%S')}
-
-        # Loop over available plugin
-        for i, plugin in enumerate(plugins):
-            if plugin in self.plugins_to_export():
-                if isinstance(all_stats[i], list):
-                    tmpStats = []
-                    for stat in all_stats[i]:
-                        # Others lines: stats
-                        tmpStats += itervalues(stat)
-                    data[plugin] = tmpStats
-                elif isinstance(all_stats[i], dict):
-                    # Others lines: stats
-                    csv_data += itervalues(all_stats[i])
-                    data[plugin] = all_stats[i]
-
-        # Export to HTTP
-        data['metadata'] = self.metadata
-        r = requests.post(self.http_endpoint, json=data, headers=self.headers)
+#    def update(self, stats):
+#        """Update stats in the CSV output file."""
+#        # Get the stats
+#        all_stats = stats.getAllExports()
+#        plugins = stats.getAllPlugins()
+#
+#        csv_data = [time.strftime('%Y-%m-%d %H:%M:%S')]
+#        data = {'ts' : time.strftime('%Y-%m-%d %H:%M:%S')}
+#
+#        # Loop over available plugin
+#        for i, plugin in enumerate(plugins):
+#            if plugin in self.plugins_to_export():
+#                if isinstance(all_stats[i], list):
+#                    tmpStats = []
+#                    for stat in all_stats[i]:
+#                        # Others lines: stats
+#                        tmpStats += itervalues(stat)
+#                    data[plugin] = tmpStats
+#                elif isinstance(all_stats[i], dict):
+#                    # Others lines: stats
+#                    csv_data += itervalues(all_stats[i])
+#                    data[plugin] = all_stats[i]
+#
+#        # Export to HTTP
+#        data['metadata'] = self.metadata
+#        r = requests.post(self.http_endpoint, json=data, headers=self.headers)
+    def export(self, name, columns, points):
+      if name not in ['load', 'mem', 'system', 'percpu', 'network']:
+        return
+      data = {}
+      data['metadata'] = self.metadata
+      data['name'] = name
+      data['data'] = {k: v for (k, v) in dict(zip(columns, points)).iteritems()}
+      r = requests.post(self.http_endpoint, json=data, headers=self.headers)
