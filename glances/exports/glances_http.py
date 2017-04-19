@@ -56,7 +56,7 @@ class Export(GlancesExport):
 
         metadata = {
           #so we actually know which user is sending us this data
-          'apikey' : self.api_key,
+          'api-key' : self.api_key,
           'version' : self.version,
           'demi-code' : self.demi_code,
           'instance-id' : self.instance_id,
