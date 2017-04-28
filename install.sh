@@ -99,12 +99,14 @@ DEPS="setuptools"
 do_with_root pip install --upgrade pip
 do_with_root pip install $DEPS
 
-GLANCES_NAME="glances-0.0.7.tar.gz"
-GLANCES_TAR="https://s3-us-west-2.amazonaws.com/lmcb-glances/{$GLANCES_NAME}"
+GLANCES_DIR="glances-0.0.7"
+GLANCES_TARBALL_NAME="glances-0.0.7.tar.gz"
+GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/lmcb-glances/$GLANCES_TARBALL_NAME"
 
-do_with_root wget https://s3-us-west-2.amazonaws.com/lmcb-glances/glances-0.0.7.tar.gz /tmp/.
-do_with_root tar -xvf /tmp/$GLANCES_NAME
-do_with_root python /tmp/$GLANCES_NAME/setup.py install
+do_with_root wget $GLANCES_TARBALL_URL -O /tmp/$GLANCES_TARBALL_NAME
+do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME
+cd /tmp/$GLANCES_DIR
+do_with_root python /tmp/$GLANCES_DIR/setup.py install
 
 # Install or ugrade Glances from the Pipy repository
 #if [[ -x /usr/local/bin/glances || -x /usr/bin/glances ]]; then
