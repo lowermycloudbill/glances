@@ -68,7 +68,7 @@ elif [[ $distrib_name == "centminmod" ]]; then
     # Install prerequirements
     do_with_root yum -y install python-devel gcc lm_sensors wireless-tools
     do_with_root wget -O- https://bootstrap.pypa.io/get-pip.py | python && $(which pip) install -U pip && ln -s $(which pip) /usr/bin/pip
-
+    
 elif [[ $distrib_name == "fedora" ]]; then
     # Fedora
 
@@ -93,7 +93,7 @@ shopt -u nocasematch
 echo "Install dependancies"
 
 # Glances issue #922: Do not install PySensors (SENSORS)
-DEPS="setuptools"
+DEPS="setuptools" 
 
 # Install libs
 do_with_root pip install --upgrade pip
@@ -109,6 +109,25 @@ do_with_root wget $GLANCES_TARBALL_URL -O /tmp/$GLANCES_TARBALL_NAME
 do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME
 cd /tmp/$GLANCES_DIR
 do_with_root python /tmp/$GLANCES_DIR/setup.py install
+
+#setup config file
+INSTANCEID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+INSTANCETYPE=$(curl http://169.254.169.254/latest/meta-data/instance-type)
+DEMICODE=$(sudo dmidecode -s bios-version)
+AVAILABILITYZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone/)
+
+cat <<EOF >> $CLOUDINFO_CONF_DIR/cloudinfo.conf
+[CloudInfo]
+APIKey=
+URL=http://development-api.lowermycloudbill.com
+
+[CloudProvider]
+DemideCode=$DEMICODE
+InstanceID=$INSTANCEID
+InstanceType=$INSTANCETYPE
+AvailabilityZone=$AVAILABILITYZONE
+EOF
+
 do_with_root mkdir -p $CLOUDINFO_CONF_DIR
 #do_with_root wget $CLOUDINFO_CONF_URL -O $CLOUDINFO_CONF_DIR
 
