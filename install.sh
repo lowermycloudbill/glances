@@ -68,7 +68,7 @@ elif [[ $distrib_name == "centminmod" ]]; then
     # Install prerequirements
     do_with_root yum -y install python-devel gcc lm_sensors wireless-tools
     do_with_root wget -O- https://bootstrap.pypa.io/get-pip.py | python && $(which pip) install -U pip && ln -s $(which pip) /usr/bin/pip
-    
+
 elif [[ $distrib_name == "fedora" ]]; then
     # Fedora
 
@@ -93,20 +93,24 @@ shopt -u nocasematch
 echo "Install dependancies"
 
 # Glances issue #922: Do not install PySensors (SENSORS)
-DEPS="setuptools" 
+DEPS="setuptools"
 
 # Install libs
 do_with_root pip install --upgrade pip
 do_with_root pip install $DEPS
 
-GLANCES_DIR="glances-0.0.7"
-GLANCES_TARBALL_NAME="glances-0.0.7.tar.gz"
+CLOUDINFO_CONF_DIR="/etc/cloudinfo/"
+CLOUDINFO_CONF_URL=""
+GLANCES_DIR="glances-0.0.9"
+GLANCES_TARBALL_NAME="glances-0.0.9.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/lmcb-glances/$GLANCES_TARBALL_NAME"
 
 do_with_root wget $GLANCES_TARBALL_URL -O /tmp/$GLANCES_TARBALL_NAME
 do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME
 cd /tmp/$GLANCES_DIR
 do_with_root python /tmp/$GLANCES_DIR/setup.py install
+do_with_root mkdir -p $CLOUDINFO_CONF_DIR
+#do_with_root wget $CLOUDINFO_CONF_URL -O $CLOUDINFO_CONF_DIR
 
 # Install or ugrade Glances from the Pipy repository
 #if [[ -x /usr/local/bin/glances || -x /usr/bin/glances ]]; then
