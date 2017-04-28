@@ -45,9 +45,9 @@ class Export(GlancesExport):
         self.version = __version__
         #parse our config file
         config = ConfigParser.RawConfigParser()
-        config.read('/etc/lowermycloudbill/lowermycloudbill.conf')
-        self.api_key = config.get('LowerMyCloudBill','APIKey')
-        self.http_endpoint = config.get('LowerMyCloudBill','URL')
+        config.read('/etc/cloudinfo/cloudinfo.conf')
+        self.api_key = config.get('CloudInfo','APIKey')
+        self.http_endpoint = config.get('CloudInfo','URL')
         #get instance specific information
         self.demi_code = config.get('CloudProvider','DemideCode')
         self.instance_id = config.get('CloudProvider','InstanceID')
