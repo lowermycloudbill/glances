@@ -38,7 +38,7 @@ def get_data_files():
 
 
 def get_install_requires():
-    requires = ['psutil>=2.0.0']
+    requires = ['psutil>=2.0.0', 'requests', 'netifaces']
     if sys.platform.startswith('win'):
         requires.append('bottle')
 
