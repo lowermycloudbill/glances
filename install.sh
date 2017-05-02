@@ -20,6 +20,8 @@ do_with_root() {
     fi
 }
 
+APIKEY=$1
+
 # Detect distribution name
 if [[ `which lsb_release 2>/dev/null` ]]; then
     # lsb_release available
@@ -118,9 +120,9 @@ AVAILABILITYZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availa
 
 mkdir -p CLOUDINFO_CONF_DIR
 
-cat <<EOF >> $CLOUDINFO_CONF_DIR/cloudinfo.conf
+cat <<EOF > $CLOUDINFO_CONF_DIR/cloudinfo.conf
 [CloudInfo]
-APIKey=
+APIKey=$APIKEY
 URL=http://development-api.cloudinfo.io
 
 [CloudProvider]
