@@ -116,10 +116,12 @@ INSTANCETYPE=$(curl http://169.254.169.254/latest/meta-data/instance-type)
 DEMICODE=$(sudo dmidecode -s bios-version)
 AVAILABILITYZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone/)
 
+mkdir -p CLOUDINFO_CONF_DIR
+
 cat <<EOF >> $CLOUDINFO_CONF_DIR/cloudinfo.conf
 [CloudInfo]
 APIKey=
-URL=http://development-api.lowermycloudbill.com
+URL=http://development-api.cloudinfo.io
 
 [CloudProvider]
 DemideCode=$DEMICODE
