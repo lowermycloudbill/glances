@@ -101,11 +101,15 @@ DEPS="setuptools"
 do_with_root pip install --upgrade pip
 do_with_root pip install $DEPS
 
+CLOUDINFO_FILE_NAME="cloudinfo.conf"
 CLOUDINFO_CONF_DIR="/etc/cloudinfo/"
-CLOUDINFO_CONF_URL=""
+CLOUDINFO_CONF_URL="https://development-api.cloudinfo.io"
 GLANCES_DIR="glances-0.0.9"
 GLANCES_TARBALL_NAME="glances-0.0.9.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/lmcb-glances/$GLANCES_TARBALL_NAME"
+
+SYSTEMD_FILE_NAME="glances.service"
+SYSTEMD_DIRECTORY="/etc/systemd/system"
 
 do_with_root wget $GLANCES_TARBALL_URL -O /tmp/$GLANCES_TARBALL_NAME
 do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME
@@ -118,12 +122,14 @@ INSTANCETYPE=$(curl http://169.254.169.254/latest/meta-data/instance-type)
 DEMICODE=$(sudo dmidecode -s bios-version)
 AVAILABILITYZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone/)
 
-mkdir -p CLOUDINFO_CONF_DIR
+#create conf directory for cloudinfo.conf
+do_with_root mkdir -p $CLOUDINFO_CONF_DIR
 
-cat <<EOF > $CLOUDINFO_CONF_DIR/cloudinfo.conf
+#dump the config
+cat <<EOF > $CLOUDINFO_CONF_DIR/$CLOUDINFO_FILE_NAME
 [CloudInfo]
 APIKey=$APIKEY
-URL=http://development-api.cloudinfo.io
+URL=$CLOUDINFO_CONF_URL
 
 [CloudProvider]
 DemideCode=$DEMICODE
@@ -132,17 +138,20 @@ InstanceType=$INSTANCETYPE
 AvailabilityZone=$AVAILABILITYZONE
 EOF
 
-do_with_root mkdir -p $CLOUDINFO_CONF_DIR
-#do_with_root wget $CLOUDINFO_CONF_URL -O $CLOUDINFO_CONF_DIR
+cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
+[Unit]
+Description=Glances
 
-# Install or ugrade Glances from the Pipy repository
-#if [[ -x /usr/local/bin/glances || -x /usr/bin/glances ]]; then
-#    echo "Upgrade Glances and dependancies"
-#    # Upgrade libs
-#    do_with_root pip install --upgrade $DEPS
-#    do_with_root pip install --upgrade glances
-#else
-#    echo "Install Glances"
-#    # Install Glances
-#    do_with_root pip install glances
-#fi
+[Service]
+ExecStart=/usr/local/bin/glances --quiet --export-http
+Restart=on-failure
+RestartSec=30s
+TimeoutSec=30s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+#install and start the daemon!
+do_with_root systemctl enable glances.service
+do_with_root systemctl start glances.service
