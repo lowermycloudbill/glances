@@ -38,7 +38,7 @@ def get_data_files():
 
 
 def get_install_requires():
-    requires = ['psutil>=2.0.0']
+    requires = ['psutil>=2.0.0', 'requests', 'netifaces']
     if sys.platform.startswith('win'):
         requires.append('bottle')
 
@@ -84,9 +84,7 @@ setup(
         'cpuinfo': ['py-cpuinfo'],
         'chart': ['matplotlib'],
         'docker': ['docker>=2.0.0'],
-        'export': ['bernhard', 'cassandra-driver', 'couchdb', 'elasticsearch',
-                   'influxdb>=1.0.0', 'kafka-python', 'pika', 'potsdb',
-                   'prometheus_client', 'pyzmq', 'statsd'],
+        'export': ['http'],
         'folders:python_version<"3.5"': ['scandir'],
         'gpu:python_version=="2.7"': ['nvidia-ml-py'],
         'ip': ['netifaces'],
