@@ -21,6 +21,7 @@ do_with_root() {
 }
 
 APIKEY=$1
+GLANCES_LOCATION=/usr/local/bin/glances
 
 # Detect distribution name
 if [[ `which lsb_release 2>/dev/null` ]]; then
@@ -62,7 +63,12 @@ elif [[ $distrib_name == "redhat" || $distrib_name == "centos" || $distrib_name 
     # Redhat/CentOS/SL
 
     # Install prerequirements
-    do_with_root yum -y install python-pip python-devel gcc lm_sensors wireless-tools
+    do_with_root yum -y install wget python-devel python-setuptools gcc lm_sensors wireless-tools
+    do_with_root easy_install pip
+    do_with_root pip install -U pip setuptools
+
+    #Glances bin in different location
+    GLANCES_LOCATION=/bin/glances
 
 elif [[ $distrib_name == "centminmod" ]]; then
     # /CentOS min based
@@ -103,9 +109,9 @@ do_with_root pip install $DEPS
 
 CLOUDINFO_FILE_NAME="cloudinfo.conf"
 CLOUDINFO_CONF_DIR="/etc/cloudinfo/"
-CLOUDINFO_CONF_URL="https://development-api.cloudinfo.io"
-GLANCES_DIR="glances-0.1.0"
-GLANCES_TARBALL_NAME="glances-0.1.0.tar.gz"
+CLOUDINFO_CONF_URL="https://api.cloudinfo.io"
+GLANCES_DIR="glances-0.1.1"
+GLANCES_TARBALL_NAME="glances-0.1.1.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/lmcb-glances/$GLANCES_TARBALL_NAME"
 
 SYSTEMD_FILE_NAME="glances.service"
@@ -143,7 +149,7 @@ cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
 Description=Glances
 
 [Service]
-ExecStart=/usr/local/bin/glances --quiet --export-http
+ExecStart=$GLANCES_LOCATION --quiet --export-http
 Restart=on-failure
 RestartSec=30s
 TimeoutSec=30s
