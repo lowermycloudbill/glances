@@ -30,9 +30,9 @@ from numbers import Number
 from glances import __version__
 from glances.compat import PY3, iterkeys, itervalues
 from glances.logger import logger
-from glances.exports.glances_export import GlancesExport
+from glances.exports.glances_export import GlancesExportBulk
 
-class Export(GlancesExport):
+class Export(GlancesExportBulk):
 
     """This class manages the CSV export module."""
 
@@ -72,13 +72,15 @@ class Export(GlancesExport):
         self.metadata = metadata
         self.headers = headers
 
+        self.bulk = {}
+
         self.export_enable = True
 
     def export(self, name, columns, points):
-      if name not in ['load', 'mem', 'system', 'percpu', 'network']:
-        return
-      data = {}
-      data['metadata'] = self.metadata
-      data['name'] = name
-      data['data'] = {k: v for (k, v) in dict(zip(columns, points)).iteritems()}
-      r = requests.post(self.http_endpoint, json=data, headers=self.headers)
+      data = {k: v for (k, v) in dict(zip(columns, points)).iteritems()}
+      self.bulk[name] = data
+
+    def flush():
+      self.bulk['metadata'] = self.metadata
+      r = requests.post(self.http_endpoint, json=self.bulk, headers=self.headers)
+      self.bulk = {}

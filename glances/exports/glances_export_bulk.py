@@ -27,7 +27,7 @@ from glances.compat import NoOptionError, NoSectionError, iteritems, iterkeys
 from glances.logger import logger
 
 
-class GlancesExport(object):
+class GlancesExportBulk(object):
 
     """Main class for Glances export IF."""
 
@@ -153,7 +153,7 @@ class GlancesExport(object):
                 continue
             export_names, export_values = self.__build_export(all_stats[plugin])
             self.export(plugin, export_names, export_values)
-
+        self.flush()
         return True
 
     def __build_export(self, stats):
