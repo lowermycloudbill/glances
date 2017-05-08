@@ -30,7 +30,7 @@ from numbers import Number
 from glances import __version__
 from glances.compat import PY3, iterkeys, itervalues
 from glances.logger import logger
-from glances.exports.glances_export import GlancesExportBulk
+from glances.exports.glances_export_bulk import GlancesExportBulk
 
 class Export(GlancesExportBulk):
 
@@ -80,7 +80,7 @@ class Export(GlancesExportBulk):
       data = {k: v for (k, v) in dict(zip(columns, points)).iteritems()}
       self.bulk[name] = data
 
-    def flush():
+    def flush(self):
       self.bulk['metadata'] = self.metadata
       r = requests.post(self.http_endpoint, json=self.bulk, headers=self.headers)
       self.bulk = {}

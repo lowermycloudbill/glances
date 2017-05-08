@@ -135,6 +135,7 @@ class GlancesStats(object):
             if (item.startswith(header) and
                     item.endswith(".py") and
                     item != (header + "export.py") and
+                    item != (header + "export_bulk.py") and
                     item != (header + "history.py") and
                     args_var['export_' + export_name] is not None and
                     args_var['export_' + export_name] is not False):
