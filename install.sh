@@ -110,15 +110,15 @@ do_with_root pip install $DEPS
 CLOUDINFO_FILE_NAME="cloudinfo.conf"
 CLOUDINFO_CONF_DIR="/etc/cloudinfo/"
 CLOUDINFO_CONF_URL="https://api.cloudinfo.io"
-GLANCES_DIR="glances-0.1.1"
-GLANCES_TARBALL_NAME="glances-0.1.1.tar.gz"
+GLANCES_DIR="glances-0.1.2"
+GLANCES_TARBALL_NAME="glances-0.1.2.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/lmcb-glances/$GLANCES_TARBALL_NAME"
 
 SYSTEMD_FILE_NAME="glances.service"
 SYSTEMD_DIRECTORY="/etc/systemd/system"
 
 do_with_root wget $GLANCES_TARBALL_URL -O /tmp/$GLANCES_TARBALL_NAME
-do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME
+do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME -C /tmp/
 cd /tmp/$GLANCES_DIR
 do_with_root python /tmp/$GLANCES_DIR/setup.py install
 
