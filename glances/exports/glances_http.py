@@ -45,7 +45,7 @@ class Export(GlancesExportBulk):
         self.version = __version__
         #parse our config file
         config = ConfigParser.RawConfigParser()
-        config.read('/etc/cloudinfo/cloudinfo.conf')
+        config.read('/etc/cloudadmin/cloudadmin.conf')
         self.api_key = config.get('CloudInfo','APIKey')
         self.http_endpoint = config.get('CloudInfo','URL')
         #get instance specific information
@@ -66,7 +66,7 @@ class Export(GlancesExportBulk):
 
         headers = {
           'apikey' : self.api_key,
-          'host' : 'metrics.cloudinfo.io'
+          'host' : 'metrics.cloudadmin.io'
         }
 
         self.metadata = metadata
