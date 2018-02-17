@@ -23,7 +23,14 @@
 # Execute with:
 # $ python -m glances (2.7+)
 
+import time
+import random
 import glances
 
 if __name__ == '__main__':
+    # Problem: Imagine There are 1000 server called at the same time (same config on all instances).
+    # Here we want to randomly slow down start program
+    server_start_interval = random.randint(0, 59)
+    time.sleep(server_start_interval)
+    # End solution for problem
     glances.main()
