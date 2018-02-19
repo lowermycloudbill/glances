@@ -107,9 +107,9 @@ DEPS="setuptools"
 do_with_root pip install --upgrade pip
 do_with_root pip install $DEPS
 
-CLOUDINFO_FILE_NAME="cloudinfo.conf"
-CLOUDINFO_CONF_DIR="/etc/cloudinfo/"
-CLOUDINFO_CONF_URL="https://api.cloudinfo.io"
+CLOUDADMIN_FILE_NAME="cloudadmin.conf"
+CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
+CLOUDADMIN_CONF_URL="https://api.cloudadmin.io"
 GLANCES_DIR="glances-0.1.1"
 GLANCES_TARBALL_NAME="glances-0.1.1.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/lmcb-glances/$GLANCES_TARBALL_NAME"
@@ -128,14 +128,14 @@ INSTANCETYPE=$(curl http://169.254.169.254/latest/meta-data/instance-type)
 DEMICODE=$(sudo dmidecode -s bios-version)
 AVAILABILITYZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone/)
 
-#create conf directory for cloudinfo.conf
-do_with_root mkdir -p $CLOUDINFO_CONF_DIR
+#create conf directory for cloudadmin.conf
+do_with_root mkdir -p $CLOUDADMIN_CONF_DIR
 
 #dump the config
-cat <<EOF > $CLOUDINFO_CONF_DIR/$CLOUDINFO_FILE_NAME
+cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
 [CloudInfo]
 APIKey=$APIKEY
-URL=$CLOUDINFO_CONF_URL
+URL=$CLOUDADMIN_CONF_URL
 
 [CloudProvider]
 DemideCode=$DEMICODE
