@@ -118,7 +118,7 @@ SYSTEMD_FILE_NAME="glances.service"
 SYSTEMD_DIRECTORY="/etc/systemd/system"
 
 do_with_root wget $GLANCES_TARBALL_URL -O /tmp/$GLANCES_TARBALL_NAME
-do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME
+do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME -C /tmp
 cd /tmp/$GLANCES_DIR
 do_with_root python /tmp/$GLANCES_DIR/setup.py install
 
