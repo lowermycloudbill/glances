@@ -66,7 +66,7 @@ class Export(GlancesExportBulk):
 
         headers = {
           'apikey' : self.api_key,
-          'host' : 'metrics.cloudadmin.io'
+          'host' : 'development-metrics.cloudadmin.io'
         }
 
         self.metadata = metadata
