@@ -160,4 +160,4 @@ EOF
 
 #install and start the daemon!
 do_with_root systemctl enable glances.service
-do_with_root systemctl start glances.service
+do_with_root systemctl start glances.service &
