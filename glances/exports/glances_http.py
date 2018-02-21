@@ -24,6 +24,7 @@ import sys
 import time
 import json
 import requests
+import datetime
 import ConfigParser
 from numbers import Number
 
@@ -82,5 +83,6 @@ class Export(GlancesExportBulk):
 
     def flush(self):
       self.bulk['metadata'] = self.metadata
+      self.bulk['sent_at'] = str(datetime.datetime.utcnow())
       r = requests.post(self.http_endpoint, json=self.bulk, headers=self.headers)
       self.bulk = {}
