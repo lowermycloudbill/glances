@@ -61,7 +61,7 @@ class Export(GlancesExportBulk):
           'demi-code' : self.demi_code,
           'instance-id' : self.instance_id,
           'instance-type' : self.instance_type,
-          'avilability-zone' : self.availability_zone
+          'availability-zone' : self.availability_zone
         }
 
         headers = {
