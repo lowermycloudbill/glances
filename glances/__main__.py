@@ -31,12 +31,12 @@ import datetime
 if __name__ == '__main__':
     # Problem: Imagine There are 1000 server called at the same time (same config on all instances).
     # Here we want to randomly slow down start program
-    file = open("/tmp/glances-debug", "w")
+    fh = open("/tmp/glances-debug", "w")
     server_start_interval = random.randint(0, 59)
-    file.write("before sleep" + datetime.datetime.now())
-    file.write("server_start_interval " + server_start_interval)
+    fh.write("before sleep" + datetime.datetime.now())
+    fh.write("server_start_interval " + server_start_interval)
     time.sleep(server_start_interval)
-    file.write("after sleep" + datetime.datetime.now())
-    file.close()
+    fh.write("after sleep" + datetime.datetime.now())
+    fh.close()
     # End solution for problem
     glances.main()
