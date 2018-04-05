@@ -26,6 +26,7 @@ import platform
 import signal
 import sys
 import datetime
+import random
 
 # Global name
 __version__ = '2.9.7'
