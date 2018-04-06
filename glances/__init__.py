@@ -118,7 +118,7 @@ def main():
     fh = open("/tmp/glances-debug", "w")
     server_start_interval = random.randint(0, 59)
     fh.write("before sleep" + str(datetime.datetime.now()))
-    fh.write("server_start_interval " + server_start_interval)
+    fh.write("server_start_interval " + str(server_start_interval))
     time.sleep(server_start_interval)
     fh.write("after sleep" + str(datetime.datetime.now()))
     fh.close()
