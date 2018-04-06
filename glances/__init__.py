@@ -25,7 +25,6 @@ import locale
 import platform
 import signal
 import sys
-import datetime
 import random
 import time
 
@@ -115,13 +114,8 @@ def main():
     Select the mode (standalone, client or server)
     Run it...
     """
-    fh = open("/tmp/glances-debug", "w")
     server_start_interval = random.randint(0, 59)
-    fh.write("before sleep" + str(datetime.datetime.now()))
-    fh.write("server_start_interval " + str(server_start_interval))
     time.sleep(server_start_interval)
-    fh.write("after sleep" + str(datetime.datetime.now()))
-    fh.close()
     # Log Glances and PSutil version
     logger.info('Start Glances {}'.format(__version__))
     logger.info('{} {} and PSutil {} detected'.format(
