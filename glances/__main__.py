@@ -23,7 +23,6 @@
 # Execute with:
 # $ python -m glances (2.7+)
 
-import time
 import glances
 import datetime
 
