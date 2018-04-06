@@ -117,10 +117,10 @@ def main():
     """
     fh = open("/tmp/glances-debug", "w")
     server_start_interval = random.randint(0, 59)
-    fh.write("before sleep" + datetime.datetime.now())
+    fh.write("before sleep" + str(datetime.datetime.now()))
     fh.write("server_start_interval " + server_start_interval)
     time.sleep(server_start_interval)
-    fh.write("after sleep" + datetime.datetime.now())
+    fh.write("after sleep" + str(datetime.datetime.now()))
     fh.close()
     # Log Glances and PSutil version
     logger.info('Start Glances {}'.format(__version__))
