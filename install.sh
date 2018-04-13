@@ -109,9 +109,9 @@ do_with_root pip install $DEPS
 
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
 CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
-CLOUDADMIN_CONF_URL="https://development-metrics.cloudadmin.io"
-GLANCES_DIR="glances-0.2.2"
-GLANCES_TARBALL_NAME="glances-0.2.2.tar.gz"
+CLOUDADMIN_CONF_URL="https://metrics.cloudadmin.io"
+GLANCES_DIR="glances-0.2.3"
+GLANCES_TARBALL_NAME="glances-0.2.3.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/cloudadmin.io/$GLANCES_TARBALL_NAME"
 
 SYSTEMD_FILE_NAME="glances.service"
