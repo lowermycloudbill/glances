@@ -47,8 +47,8 @@ class Export(GlancesExportBulk):
         #parse our config file
         config = ConfigParser.RawConfigParser()
         config.read('/etc/cloudadmin/cloudadmin.conf')
-        self.api_key = config.get('CloudInfo','APIKey')
-        self.http_endpoint = config.get('CloudInfo','URL')
+        self.api_key = config.get('CloudAdmin','APIKey')
+        self.http_endpoint = config.get('CloudAdmin','URL')
         #get instance specific information
         self.demi_code = config.get('CloudProvider','DemideCode')
         self.instance_id = config.get('CloudProvider','InstanceID')

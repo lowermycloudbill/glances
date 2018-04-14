@@ -133,7 +133,7 @@ do_with_root mkdir -p $CLOUDADMIN_CONF_DIR
 
 #dump the config
 cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
-[CloudInfo]
+[CloudAdmin]
 APIKey=$APIKEY
 URL=$CLOUDADMIN_CONF_URL
 
