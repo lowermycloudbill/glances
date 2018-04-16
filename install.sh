@@ -199,7 +199,7 @@ cat > /etc/init.d/glances << 'EOF'
 # Description:       CloudAdmin fork of Glances
 ### END INIT INFO
 
-SCRIPT=$GLANCES_LOCATION --quiet --export-http
+SCRIPT=/usr/local/bin/glances --quiet --export-http
 RUNAS=root
 
 PIDFILE=/var/run/glances.pid
