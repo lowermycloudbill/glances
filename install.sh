@@ -22,6 +22,7 @@ do_with_root() {
 
 APIKEY=$1
 GLANCES_LOCATION=/usr/local/bin/glances
+UBUNTU_VERSION=lsb_release -rs
 
 # Detect distribution name
 if [[ `which lsb_release 2>/dev/null` ]]; then
@@ -57,13 +58,13 @@ if [[ $distrib_name == "ubuntu" || $distrib_name == "LinuxMint" || $distrib_name
     do_with_root apt-get -y --force-yes update
 
     # Install prerequirements
-    do_with_root apt-get install -y --force-yes python-pip python-dev gcc lm-sensors wireless-tools
+    do_with_root apt-get install -y --force-yes python-pip python-dev gcc #lm-sensors wireless-tools
 
 elif [[ $distrib_name == "redhat" || $distrib_name == "centos" || $distrib_name == "Scientific" ]]; then
     # Redhat/CentOS/SL
 
     # Install prerequirements
-    do_with_root yum -y install wget python-devel python-setuptools gcc lm_sensors wireless-tools
+    do_with_root yum -y install wget python-devel python-setuptools gcc #lm_sensors wireless-tools
     do_with_root easy_install pip
     do_with_root pip install -U pip setuptools
 
@@ -74,20 +75,20 @@ elif [[ $distrib_name == "centminmod" ]]; then
     # /CentOS min based
 
     # Install prerequirements
-    do_with_root yum -y install python-devel gcc lm_sensors wireless-tools
+    do_with_root yum -y install python-devel gcc #lm_sensors wireless-tools
     do_with_root wget -O- https://bootstrap.pypa.io/get-pip.py | python && $(which pip) install -U pip && ln -s $(which pip) /usr/bin/pip
     
 elif [[ $distrib_name == "fedora" ]]; then
     # Fedora
 
     # Install prerequirements
-    do_with_root dnf -y install python-pip python-devel gcc lm_sensors wireless-tools
+    do_with_root dnf -y install python-pip python-devel gcc #lm_sensors wireless-tools
 
 elif [[ $distrib_name == "arch" ]]; then
     # Arch support
 
     # Headers not needed for Arch, shipped with regular python packages
-    do_with_root pacman -S python-pip lm_sensors wireless_tools --noconfirm
+    do_with_root pacman -S python-pip #lm_sensors wireless_tools --noconfirm
 
 else
     # Unsupported system
@@ -104,7 +105,8 @@ echo "Install dependancies"
 DEPS="setuptools" 
 
 # Install libs
-do_with_root pip install --upgrade pip
+do_with_root pip install --upgrade pip --index-url=https://pypi.python.org/simple/
+do_with_root hash -r
 do_with_root pip install $DEPS
 
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
@@ -131,6 +133,7 @@ AVAILABILITYZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availa
 #create conf directory for cloudadmin.conf
 do_with_root mkdir -p $CLOUDADMIN_CONF_DIR
 
+
 #dump the config
 cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
 [CloudAdmin]
@@ -144,6 +147,93 @@ InstanceType=$INSTANCETYPE
 AvailabilityZone=$AVAILABILITYZONE
 EOF
 
+if [[ UBUNTU_VERSION == "12.04" ]]
+then
+echo "1. mv \"$SERVICE_FILE\" \"/etc/init.d/$NAME\""
+mv -v "$SERVICE_FILE" "/etc/init.d/$NAME"
+echo "2. touch \"/var/log/$NAME.log\" && chown \"$USERNAME\" \"/var/log/$NAME.log\""
+touch "/var/log/$NAME.log" && chown "$USERNAME" "/var/log/$NAME.log"
+echo "3. update-rc.d \"$NAME\" defaults"
+update-rc.d "$NAME" defaults
+echo "4. service \"$NAME\" start"
+service "$NAME" start
+
+cat <<EOF > /etc/init.d/glances
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          Glances
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       CloudAdmin fork of Glances
+### END INIT INFO
+
+SCRIPT=$GLANCES_LOCATION --quiet --export-http
+RUNAS=root
+
+PIDFILE=/var/run/glances.pid
+LOGFILE=/var/log/glanceslog
+
+start() {
+  if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
+    echo 'Service already running' >&2
+    return 1
+  fi
+  echo 'Starting service…' >&2
+  local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
+  su -c "$CMD" $RUNAS > "$PIDFILE"
+  echo 'Service started' >&2
+}
+
+stop() {
+  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
+    echo 'Service not running' >&2
+    return 1
+  fi
+  echo 'Stopping service…' >&2
+  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+  echo 'Service stopped' >&2
+}
+
+uninstall() {
+  echo -n "Are you really sure you want to uninstall this service? That cannot be undone. [yes|No] "
+  local SURE
+  read SURE
+  if [ "$SURE" = "yes" ]; then
+    stop
+    rm -f "$PIDFILE"
+    echo "Notice: log file is not be removed: '$LOGFILE'" >&2
+    update-rc.d -f <NAME> remove
+    rm -fv "$0"
+  fi
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  uninstall)
+    uninstall
+    ;;
+  retart)
+    stop
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|uninstall}"
+esac
+EOF
+
+#Let's start this up!
+touch /var/log/glances.log
+update-rc.d glances default
+service glances start
+
+elif [ $UBUNTU_VERSION == "14.04" ] || [ $UBUNTU_VERSION == "16.04" ] ; then
 cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
 [Unit]
 Description=Glances
@@ -157,7 +247,7 @@ TimeoutSec=30s
 [Install]
 WantedBy=multi-user.target
 EOF
-
 #install and start the daemon!
 do_with_root systemctl enable glances.service
 do_with_root systemctl start glances.service &
+fi

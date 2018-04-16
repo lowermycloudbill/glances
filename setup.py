@@ -77,6 +77,7 @@ setup(
     license='LGPLv3',
     keywords="cli curses monitoring system",
     install_requires=get_install_requires(),
+    dependency_links = ['https://pypi.python.org/simple/requests', 'https://pypi.python.org/simple/psutil/', 'https://pypi.python.org/simple/netifaces/', 'https://pypi.python.org/simple/certifi/', 'https://pypi.python.org/simple/urllib3/', 'https://pypi.python.org/simple/idna/', 'https://pypi.python.org/simple/chardet/'],
     extras_require={
         'action': ['pystache'],
         'browser': ['zeroconf>=0.17'],
