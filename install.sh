@@ -5,6 +5,37 @@
 # Author:  Nicolas Hennion (aka) Nicolargo
 #
 
+vercomp () {
+    if [[ $1 == $2 ]]
+    then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+    do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++))
+    do
+        if [[ -z ${ver2[i]} ]]
+        then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]}))
+        then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]}))
+        then
+            return 2
+        fi
+    done
+    return 0
+}
+
 # Execute a command as root (or sudo)
 do_with_root() {
     # already root? "Just do it" (tm).
@@ -104,8 +135,13 @@ echo "Install dependancies"
 # Glances issue #922: Do not install PySensors (SENSORS)
 DEPS="setuptools" 
 
-# Install libs
-do_with_root pip install --upgrade pip --index-url=https://pypi.python.org/simple/
+PIP_VERSION=`pip --version | cut -d ' ' -f2`
+vercomp $PIP_VERSION "10.0.0"
+
+if [ $? == 2 ]
+then
+    do_with_root pip install --upgrade pip --index-url=https://pypi.python.org/simple/
+fi
 do_with_root hash -r
 do_with_root pip install $DEPS
 
@@ -133,6 +169,7 @@ AVAILABILITYZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availa
 #create conf directory for cloudadmin.conf
 do_with_root mkdir -p $CLOUDADMIN_CONF_DIR
 
+echo "HELLOOOOOO!!!"
 
 #dump the config
 cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
@@ -147,7 +184,14 @@ InstanceType=$INSTANCETYPE
 AvailabilityZone=$AVAILABILITYZONE
 EOF
 
-if [[ UBUNTU_VERSION == "12.04" ]]
+echo "HELLOOOOOO!!!"
+
+vercomp $UBUNTU_VERSION "10.0.0"
+echo $?
+echo "======"
+echo "======"
+
+if [ $? == 0 ]
 then
 echo "1. mv \"$SERVICE_FILE\" \"/etc/init.d/$NAME\""
 mv -v "$SERVICE_FILE" "/etc/init.d/$NAME"
@@ -233,7 +277,7 @@ touch /var/log/glances.log
 update-rc.d glances default
 service glances start
 
-elif [ $UBUNTU_VERSION == "14.04" ] || [ $UBUNTU_VERSION == "16.04" ] ; then
+elif [ "$UBUNTU_VERSION" == "14.04" ] || [ "$UBUNTU_VERSION" == "16.04" ] ; then
 cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
 [Unit]
 Description=Glances
