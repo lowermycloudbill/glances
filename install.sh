@@ -53,7 +53,7 @@ do_with_root() {
 
 APIKEY=$1
 GLANCES_LOCATION=/usr/local/bin/glances
-UBUNTU_VERSION=lsb_release -rs
+UBUNTU_VERSION=`lsb_release -rs`
 
 # Detect distribution name
 if [[ `which lsb_release 2>/dev/null` ]]; then
@@ -184,24 +184,10 @@ InstanceType=$INSTANCETYPE
 AvailabilityZone=$AVAILABILITYZONE
 EOF
 
-echo "HELLOOOOOO!!!"
-
-vercomp $UBUNTU_VERSION "10.0.0"
-echo $?
-echo "======"
-echo "======"
+vercomp $UBUNTU_VERSION "12.04"
 
 if [ $? == 0 ]
 then
-echo "1. mv \"$SERVICE_FILE\" \"/etc/init.d/$NAME\""
-mv -v "$SERVICE_FILE" "/etc/init.d/$NAME"
-echo "2. touch \"/var/log/$NAME.log\" && chown \"$USERNAME\" \"/var/log/$NAME.log\""
-touch "/var/log/$NAME.log" && chown "$USERNAME" "/var/log/$NAME.log"
-echo "3. update-rc.d \"$NAME\" defaults"
-update-rc.d "$NAME" defaults
-echo "4. service \"$NAME\" start"
-service "$NAME" start
-
 cat <<EOF > /etc/init.d/glances
 #!/bin/sh
 ### BEGIN INIT INFO
@@ -217,10 +203,10 @@ SCRIPT=$GLANCES_LOCATION --quiet --export-http
 RUNAS=root
 
 PIDFILE=/var/run/glances.pid
-LOGFILE=/var/log/glanceslog
+LOGFILE=/var/log/glances.log
 
 start() {
-  if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
+  if [ -f /var/run/"$PIDNAME" ] && kill -0 $"(cat /var/run/$PIDNAME)"; then
     echo 'Service already running' >&2
     return 1
   fi
