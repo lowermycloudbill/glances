@@ -260,6 +260,7 @@ EOF
 
 #Let's start this up!
 touch /var/log/glances.log
+chmod +x /etc/init.d/glances
 update-rc.d glances default
 service glances start
 
