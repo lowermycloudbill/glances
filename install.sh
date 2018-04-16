@@ -188,7 +188,7 @@ vercomp $UBUNTU_VERSION "12.04"
 
 if [ $? == 0 ]
 then
-cat <<EOF > /etc/init.d/glances
+cat > /etc/init.d/glances << 'EOF'
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          Glances
@@ -206,7 +206,7 @@ PIDFILE=/var/run/glances.pid
 LOGFILE=/var/log/glances.log
 
 start() {
-  if [ -f /var/run/"$PIDNAME" ] && kill -0 $"(cat /var/run/$PIDNAME)"; then
+  if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
     echo 'Service already running' >&2
     return 1
   fi
