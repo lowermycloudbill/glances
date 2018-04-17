@@ -86,7 +86,6 @@ setup(
         'chart': ['matplotlib'],
         'docker': ['docker>=2.0.0'],
         'export': ['http'],
-        'folders:python_version<"3.5"': ['scandir'],
         'gpu:python_version=="2.7"': ['nvidia-ml-py'],
         'ip': ['netifaces'],
         'raid': ['pymdstat'],
