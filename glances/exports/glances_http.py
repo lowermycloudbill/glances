@@ -84,5 +84,5 @@ class Export(GlancesExportBulk):
     def flush(self):
       self.bulk['metadata'] = self.metadata
       self.bulk['sent_at'] = str(datetime.datetime.utcnow())
-      r = requests.post(self.http_endpoint, json=self.bulk, headers=self.headers)
+      r = requests.post(self.http_endpoint, data=json.dumps(self.bulk), headers=self.headers)
       self.bulk = {}
