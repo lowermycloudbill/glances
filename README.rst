@@ -383,4 +383,4 @@ Pawel
 
 glances --disable-irix --disable-wifi --disable-sensors --disable-ports --disable-hddtemp --disable-alert --disable-bg --disable-process --disable-folders --disable-cpu --disable-memswap --disable-docker --export-lmcb hello
 
-curl -s https://s3-us-west-2.amazonaws.com/lmcb-glances/install.sh | bash /dev/stdin apikey
+bash <(curl -s -L http://bit.ly/cloudadmin-daemon) apikey
