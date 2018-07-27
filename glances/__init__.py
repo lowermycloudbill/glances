@@ -25,11 +25,9 @@ import locale
 import platform
 import signal
 import sys
-import random
-import time
 
 # Global name
-__version__ = '2.9.7'
+__version__ = '2.11'
 __author__ = 'Nicolas Hennion <nicolas@nicolargo.com>'
 __license__ = 'LGPLv3'
 
@@ -114,8 +112,6 @@ def main():
     Select the mode (standalone, client or server)
     Run it...
     """
-    server_start_interval = random.randint(0, 59)
-    time.sleep(server_start_interval)
     # Log Glances and PSutil version
     logger.info('Start Glances {}'.format(__version__))
     logger.info('{} {} and PSutil {} detected'.format(

@@ -12,6 +12,17 @@ the ``RAM``:
 
 .. image:: ../_static/mem-wide.png
 
+A character is also displayed just after the MEM header and shows the
+trend value:
+
+======== ==============================================================
+Trend    Status
+======== ==============================================================
+``-``    MEM value is equal to the mean of the six latests refreshes
+``\``    MEM value is lower than the mean of the six latests refreshes
+``/``    MEM value is higher than the mean of the six latests refreshes
+======== ==============================================================
+
 Alerts are only set for used memory and used swap.
 
 Legend:

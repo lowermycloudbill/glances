@@ -21,6 +21,7 @@
 
 import operator
 
+from glances.compat import u
 from glances.plugins.glances_plugin import GlancesPlugin
 
 import psutil
@@ -131,7 +132,8 @@ class Plugin(GlancesPlugin):
                 fs_current = {
                     'device_name': fs.device,
                     'fs_type': fs.fstype,
-                    'mnt_point': fs.mountpoint,
+                    # Manage non breaking space (see issue #1065)
+                    'mnt_point': u(fs.mountpoint).replace(u'\u00A0', ' '),
                     'size': fs_usage.total,
                     'used': fs_usage.used,
                     'free': fs_usage.free,

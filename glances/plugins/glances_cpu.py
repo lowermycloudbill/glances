@@ -229,8 +229,16 @@ class Plugin(GlancesPlugin):
         idle_tag = 'user' not in self.stats
 
         # Header
-        msg = '{:8}'.format('CPU')
+        msg = '{}'.format('CPU')
         ret.append(self.curse_add_line(msg, "TITLE"))
+        trend_user = self.get_trend('user')
+        trend_system = self.get_trend('system')
+        if trend_user is None or trend_user is None:
+            trend_cpu = None
+        else:
+            trend_cpu = trend_user + trend_system
+        msg = ' {:4}'.format(self.trend_msg(trend_cpu))
+        ret.append(self.curse_add_line(msg))
         # Total CPU usage
         msg = '{:5.1f}%'.format(self.stats['total'])
         if idle_tag:
@@ -248,7 +256,8 @@ class Plugin(GlancesPlugin):
         if 'ctx_switches' in self.stats:
             msg = '  {:8}'.format('ctx_sw:')
             ret.append(self.curse_add_line(msg, optional=self.get_views(key='ctx_switches', option='optional')))
-            msg = '{:>5}'.format(int(self.stats['ctx_switches'] // self.stats['time_since_update']))
+            msg = '{:>5}'.format(self.auto_unit(int(self.stats['ctx_switches'] // self.stats['time_since_update']),
+                                                min_symbol='K'))
             ret.append(self.curse_add_line(
                 msg, self.get_views(key='ctx_switches', option='decoration'),
                 optional=self.get_views(key='ctx_switches', option='optional')))

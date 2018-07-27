@@ -25,8 +25,20 @@ import operator
 import sys
 import unicodedata
 import types
+import platform
 
+PY_CYTHON = platform.python_implementation() == 'CPython'
+PY_PYPY = platform.python_implementation() == 'PyPy'
+PY_JYTHON = platform.python_implementation() == 'Jython'
+PY_IRON = platform.python_implementation() == 'IronPython'
 PY3 = sys.version_info[0] == 3
+
+try:
+    from statistics import mean
+except ImportError:
+    # Statistics is only available for Python 3.4 or higher
+    def mean(numbers):
+        return float(sum(numbers)) / max(len(numbers), 1)
 
 if PY3:
     import queue
@@ -35,6 +47,7 @@ if PY3:
     from xmlrpc.server import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
     from urllib.request import urlopen
     from urllib.error import HTTPError, URLError
+    from urllib.parse import urlparse
 
     input = input
     range = range
@@ -72,7 +85,9 @@ if PY3:
         return iter(d.values())
 
     def u(s):
-        return s
+        if isinstance(s, text_type):
+            return s
+        return s.decode('utf-8', 'replace')
 
     def b(s):
         if isinstance(s, binary_type):
@@ -90,6 +105,7 @@ else:
     from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
     from xmlrpclib import Fault, ProtocolError, ServerProxy, Transport, Server
     from urllib2 import urlopen, HTTPError, URLError
+    from urlparse import urlparse
 
     input = raw_input
     range = xrange
@@ -129,10 +145,14 @@ else:
         return d.itervalues()
 
     def u(s):
+        if isinstance(s, text_type):
+            return s
         return s.decode('utf-8')
 
     def b(s):
-        return s
+        if isinstance(s, binary_type):
+            return s
+        return s.encode('utf-8', 'replace')
 
     def nativestr(s):
         if isinstance(s, binary_type):

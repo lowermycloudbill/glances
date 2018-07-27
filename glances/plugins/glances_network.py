@@ -97,7 +97,7 @@ class Plugin(GlancesPlugin):
             netstatus = {}
             try:
                 netstatus = psutil.net_if_stats()
-            except AttributeError:
+            except (AttributeError, OSError):
                 pass
 
             # Previous network interface stats are stored in the network_old variable
@@ -298,11 +298,6 @@ class Plugin(GlancesPlugin):
                 msg = '{:>7}'.format('Tx/s')
                 ret.append(self.curse_add_line(msg))
         # Interface list (sorted by name)
-        filteredStats = []
-        for stat in self.stats:
-            if isinstance(stat, dict):
-                filteredStats.append(stat)
-        self.stats = filteredStats
         for i in sorted(self.stats, key=operator.itemgetter(self.get_key())):
             # Do not display interface in down state (issue #765)
             if ('is_up' in i) and (i['is_up'] is False):

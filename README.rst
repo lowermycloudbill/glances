@@ -20,7 +20,10 @@ Glances - An eye on your system
 .. image:: https://img.shields.io/scrutinizer/g/nicolargo/glances.svg
     :target: https://scrutinizer-ci.com/g/nicolargo/glances/
 
-Follow Glances on Twitter: `@nicolargo`_ or `@glances_system`_
+.. image:: https://img.shields.io/badge/Donate-PayPal-green.svg
+    :target: https://www.paypal.me/nicolargo
+
+Follow Glances on Twitter: `@nicolargo`_
 
 Summary
 =======
@@ -61,7 +64,7 @@ Optional dependencies:
 - ``kafka-python`` (for the Kafka export module)
 - ``matplotlib`` (for graphical/chart support)
 - ``netifaces`` (for the IP plugin)
-- ``nvidia-ml-py`` (for the GPU plugin) [Python 2-only]
+- ``nvidia-ml-py3`` (for the GPU plugin)
 - ``pika`` (for the RabbitMQ/ActiveMQ export module)
 - ``potsdb`` (for the OpenTSDB export module)
 - ``prometheus_client`` (for the Prometheus export module)
@@ -70,7 +73,7 @@ Optional dependencies:
 - ``pysnmp`` (for SNMP support)
 - ``pystache`` (for the action script feature)
 - ``pyzmq`` (for the ZeroMQ export module)
-- ``requests`` (for the Ports and Cloud plugins)
+- ``requests`` (for the Ports, Cloud plugins and Restful export module)
 - ``scandir`` (for the Folders plugin) [Only for Python < 3.5]
 - ``statsd`` (for the StatsD export module)
 - ``wifi`` (for the wifi plugin) [Linux-only]
@@ -262,6 +265,7 @@ Start Termux on your device and enter:
     $ apt update
     $ apt upgrade
     $ apt install clang python python-dev
+    $ pip install bottle
     $ pip install glances
 
 And start Glances:
@@ -269,6 +273,9 @@ And start Glances:
 .. code-block:: console
 
     $ glances
+
+You can also run Glances in server mode (-s or -w) in order to remotely
+monitor your Android device.
 
 Source
 ------
@@ -344,9 +351,9 @@ If you have any question (after RTFM!), please post it on the official Q&A `foru
 Gateway to other services
 =========================
 
-Glances can export stats to: ``CSV`` file, ``InfluxDB``, ``Cassandra``, ``CouchDB``,
+Glances can export stats to: ``CSV`` file, ``JSON`` file, ``InfluxDB``, ``Cassandra``, ``CouchDB``,
 ``OpenTSDB``, ``Prometheus``, ``StatsD``, ``ElasticSearch``, ``RabbitMQ/ActiveMQ``,
-``ZeroMQ``, ``Kafka`` and ``Riemann`` server.
+``ZeroMQ``, ``Kafka``, ``Riemann`` and ``Restful`` server.
 
 How to contribute ?
 ===================
@@ -371,16 +378,8 @@ LGPLv3. See ``COPYING`` for more details.
 .. _psutil: https://github.com/giampaolo/psutil
 .. _glancesautoinstall: https://github.com/nicolargo/glancesautoinstall
 .. _@nicolargo: https://twitter.com/nicolargo
-.. _@glances_system: https://twitter.com/glances_system
 .. _Python: https://www.python.org/getit/
 .. _Termux: https://play.google.com/store/apps/details?id=com.termux
 .. _readthedocs: https://glances.readthedocs.io/
 .. _forum: https://groups.google.com/forum/?hl=en#!forum/glances-users
 .. _wiki: https://github.com/nicolargo/glances/wiki/How-to-contribute-to-Glances-%3F
-
-Pawel
-=======
-
-glances --disable-irix --disable-wifi --disable-sensors --disable-ports --disable-hddtemp --disable-alert --disable-bg --disable-process --disable-folders --disable-cpu --disable-memswap --disable-docker --export-lmcb hello
-
-bash <(curl -s -L http://bit.ly/cloudadmin-daemon) apikey

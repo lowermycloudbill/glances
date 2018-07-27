@@ -99,11 +99,6 @@ class Plugin(GlancesPlugin):
             ret.append(self.curse_new_line())
             msg = '{:8}'.format(stat + ':')
             ret.append(self.curse_add_line(msg))
-            cleanStats = []
-            for stat in self.stats:
-                if isinstance(stat,dict):
-                    cleanStats.sppend(stat)
-            self.stats = cleanStats
             for cpu in self.stats:
                 try:
                     msg = '{:6.1f}%'.format(cpu[stat])

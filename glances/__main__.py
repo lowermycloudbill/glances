@@ -24,7 +24,6 @@
 # $ python -m glances (2.7+)
 
 import glances
-import datetime
 
 if __name__ == '__main__':
     glances.main()

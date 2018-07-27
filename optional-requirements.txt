@@ -1,13 +1,24 @@
+bernhard
 bottle
+cassandra-driver
+couchdb
 docker
+elasticsearch
+influxdb
+kafka-python
 matplotlib
 netifaces
-nvidia-ml-py; python_version == "2.7"
+nvidia-ml-py3
+pika
+potsdb
+prometheus_client
 py-cpuinfo
 pymdstat
 pysnmp
 pystache
+pyzmq
 requests
 scandir; python_version < "3.5"
+statsd
 wifi
 zeroconf

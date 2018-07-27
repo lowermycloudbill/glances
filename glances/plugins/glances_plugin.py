@@ -27,11 +27,12 @@ import re
 import json
 from operator import itemgetter
 
-from glances.compat import iterkeys, itervalues, listkeys, map
+from glances.compat import iterkeys, itervalues, listkeys, map, mean
 from glances.actions import GlancesActions
 from glances.history import GlancesHistory
 from glances.logger import logger
 from glances.logs import glances_logs
+from glances.thresholds import glances_thresholds
 
 
 class GlancesPlugin(object):
@@ -39,7 +40,28 @@ class GlancesPlugin(object):
     """Main class for Glances plugin."""
 
     def __init__(self, args=None, items_history_list=None):
-        """Init the plugin of plugins class."""
+        """Init the plugin of plugins class.
+
+        All Glances' plugins should inherit from this class. Most of the
+        methods are already implemented in the father classes.
+
+        Your plugin should return a dict or a list of dicts (stored in the
+        self.stats). As an example, you can have a look on the mem plugin
+        (for dict) or network (for list of dicts).
+
+        A plugin should implement:
+        - the __init__ constructor: define the self.display_curse
+        - the reset method: to set your self.stats variable to {} or []
+        - the update method: where your self.stats variable is set
+        and optionnaly:
+        - the get_key method: set the key of the dict (only for list of dict)
+        - the update_view method: only if you need to trick your output
+        - the msg_curse: define the curse (UI) message (if display_curse is True)
+
+        :args: args parameters
+        :items_history_list: list of items to store in the history
+        """
+
         # Plugin name (= module name without glances_)
         self.plugin_name = self.__class__.__module__[len('glances_'):]
         # logger.debug("Init plugin %s" % self.plugin_name)
@@ -54,9 +76,6 @@ class GlancesPlugin(object):
         self._input_method = 'local'
         self._short_system_name = None
 
-        # Init the stats list
-        self.stats = None
-
         # Init the history list
         self.items_history_list = items_history_list
         self.stats_history = self.init_stats_history()
@@ -70,9 +89,9 @@ class GlancesPlugin(object):
         # Init the views
         self.views = dict()
 
-    def exit(self):
-        """Method to be called when Glances exit"""
-        logger.debug("Stop the {} plugin".format(self.plugin_name))
+        # Init the stats (dict of list or dict)
+        self.stats = None
+        self.reset()
 
     def __repr__(self):
         """Return the raw stats."""
@@ -81,6 +100,15 @@ class GlancesPlugin(object):
     def __str__(self):
         """Return the human-readable stats."""
         return str(self.stats)
+
+    def reset(self):
+        """Reset the stats.
+        This method should be overwrited by childs' classes"""
+        self.stats = None
+
+    def exit(self):
+        """Method to be called when Glances exit"""
+        logger.debug("Stop the {} plugin".format(self.plugin_name))
 
     def get_key(self):
         """Return the key of the list."""
@@ -156,12 +184,13 @@ class GlancesPlugin(object):
         """Return the items history list."""
         return self.items_history_list
 
-    def get_raw_history(self, item=None):
+    def get_raw_history(self, item=None, nb=0):
         """Return
         - the stats history (dict of list) if item is None
         - the stats history for the given item (list) instead
-        - None if item did not exist in the history"""
-        s = self.stats_history.get()
+        - None if item did not exist in the history
+        Limit to lasts nb items (all if nb=0)"""
+        s = self.stats_history.get(nb=nb)
         if item is None:
             return s
         else:
@@ -214,6 +243,17 @@ class GlancesPlugin(object):
                 return None
         else:
             return None
+
+    def get_trend(self, item, nb=6):
+        """Get the trend regarding to the last nb values
+        The trend is the diff between the mean of the last nb values
+        and the current one.
+        """
+        raw_history = self.get_raw_history(item=item, nb=nb)
+        if raw_history is None or len(raw_history) < nb:
+            return None
+        last_nb = [v[1] for v in raw_history]
+        return last_nb[-1] - mean(last_nb[:-1])
 
     @property
     def input_method(self):
@@ -417,6 +457,10 @@ class GlancesPlugin(object):
                 else:
                     return 'DEFAULT'
 
+    def get_json_views(self, item=None, key=None, option=None):
+        """Return views in JSON"""
+        return self._json_dumps(self.get_views(item, key, option))
+
     def load_limits(self, config):
         """Load limits from the configuration file, if it exists."""
 
@@ -533,11 +577,21 @@ class GlancesPlugin(object):
             # Add the log to the list
             glances_logs.add(ret, stat_name.upper(), value)
 
+        # Manage threshold
+        self.manage_threshold(stat_name, ret)
+
         # Manage action
         self.manage_action(stat_name, ret.lower(), header, action_key)
 
-        # Default is ok
+        # Default is 'OK'
         return ret + log_str
+
+    def manage_threshold(self,
+                         stat_name,
+                         trigger):
+        """Manage the threshold for the current stat"""
+        glances_thresholds.add(stat_name, trigger)
+        # logger.info(glances_thresholds.get())
 
     def manage_action(self,
                       stat_name,
@@ -547,7 +601,7 @@ class GlancesPlugin(object):
         """Manage the action for the current stat"""
         # Here is a command line for the current trigger ?
         try:
-            command = self.get_limit_action(trigger, stat_name=stat_name)
+            command, repeat = self.get_limit_action(trigger, stat_name=stat_name)
         except KeyError:
             # Reset the trigger
             self.actions.set(stat_name, trigger)
@@ -572,7 +626,8 @@ class GlancesPlugin(object):
                 mustache_dict = self.get_stats_action()
             # 2) Run the action
             self.actions.run(
-                stat_name, trigger, command, mustache_dict=mustache_dict)
+                stat_name, trigger,
+                command, repeat, mustache_dict=mustache_dict)
 
     def get_alert_log(self,
                       current=0,
@@ -605,18 +660,22 @@ class GlancesPlugin(object):
         return limit
 
     def get_limit_action(self, criticity, stat_name=""):
-        """Return the action for the alert."""
+        """Return the tuple (action, repeat) for the alert.
+        - action is a command line
+        - repeat is a bool"""
         # Get the action for stat + header
         # Exemple: network_wlan0_rx_careful_action
-        try:
-            ret = self._limits[stat_name + '_' + criticity + '_action']
-        except KeyError:
-            # Try fallback to plugin default limit
-            # Exemple: network_careful_action
-            ret = self._limits[self.plugin_name + '_' + criticity + '_action']
+        # Action key available ?
+        ret = [(stat_name + '_' + criticity + '_action', False),
+               (stat_name + '_' + criticity + '_action_repeat', True),
+               (self.plugin_name + '_' + criticity + '_action', False),
+               (self.plugin_name + '_' + criticity + '_action_repeat', True)]
+        for r in ret:
+            if r[0] in self._limits:
+                return self._limits[r[0]], r[1]
 
-        # Return the action list
-        return ret
+        # No key found, the raise an error
+        raise KeyError
 
     def get_limit_log(self, stat_name, default_action=False):
         """Return the log tag for the alert."""
@@ -663,13 +722,15 @@ class GlancesPlugin(object):
         hide=sda2,sda5,loop.*
         """
         # TODO: possible optimisation: create a re.compile list
-        return not all(j is None for j in [re.match(i, value) for i in self.get_conf_value('hide', header=header)])
+        return not all(j is None for j in [re.match(i, value.lower()) for i in self.get_conf_value('hide', header=header)])
 
     def has_alias(self, header):
         """Return the alias name for the relative header or None if nonexist."""
         try:
-            return self._limits[self.plugin_name + '_' + header + '_' + 'alias'][0]
+            # Force to lower case (issue #1126)
+            return self._limits[self.plugin_name + '_' + header.lower() + '_' + 'alias'][0]
         except (KeyError, IndexError):
+            # logger.debug("No alias found for {}".format(header))
             return None
 
     def msg_curse(self, args=None, max_width=None):
@@ -750,7 +811,10 @@ class GlancesPlugin(object):
         """
         self._align = value
 
-    def auto_unit(self, number, low_precision=False):
+    def auto_unit(self, number,
+                  low_precision=False,
+                  min_symbol='K'
+                  ):
         """Make a nice human-readable string out of number.
 
         Number of decimal places increases as quantity approaches 1.
@@ -764,10 +828,13 @@ class GlancesPlugin(object):
         CASE: 1073741824       RESULT:      1024M low_precision:      1024M
         CASE: 1181116006       RESULT:      1.10G low_precision:       1.1G
 
-        'low_precision=True' returns less decimal places potentially
-        sacrificing precision for more readability.
+        :low_precision: returns less decimal places potentially (default is False)
+                        sacrificing precision for more readability.
+        :min_symbol: Do not approache if number < min_symbol (default is K)
         """
         symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
+        if min_symbol in symbols:
+            symbols = symbols[symbols.index(min_symbol):]
         prefix = {
             'Y': 1208925819614629174706176,
             'Z': 1180591620717411303424,
@@ -797,6 +864,18 @@ class GlancesPlugin(object):
                 return '{:.{decimal}f}{symbol}'.format(
                     value, decimal=decimal_precision, symbol=symbol)
         return '{!s}'.format(number)
+
+    def trend_msg(self, trend, significant=1):
+        """Return the trend message
+        Do not take into account if trend < significant"""
+        ret = '-'
+        if trend is None:
+            ret = ' '
+        elif trend > significant:
+            ret = '/'
+        elif trend < -significant:
+            ret = '\\'
+        return ret
 
     def _check_decorator(fct):
         """Check if the plugin is enabled."""

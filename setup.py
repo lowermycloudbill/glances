@@ -38,7 +38,7 @@ def get_data_files():
 
 
 def get_install_requires():
-    requires = ['psutil>=2.0.0', 'requests', 'netifaces']
+    requires = ['psutil>=2.0.0']
     if sys.platform.startswith('win'):
         requires.append('bottle')
 
@@ -77,7 +77,6 @@ setup(
     license='LGPLv3',
     keywords="cli curses monitoring system",
     install_requires=get_install_requires(),
-    dependency_links = ['https://pypi.python.org/simple/requests', 'https://pypi.python.org/simple/psutil/', 'https://pypi.python.org/simple/netifaces/', 'https://pypi.python.org/simple/certifi/', 'https://pypi.python.org/simple/urllib3/', 'https://pypi.python.org/simple/idna/', 'https://pypi.python.org/simple/chardet/'],
     extras_require={
         'action': ['pystache'],
         'browser': ['zeroconf>=0.17'],
@@ -85,8 +84,11 @@ setup(
         'cpuinfo': ['py-cpuinfo'],
         'chart': ['matplotlib'],
         'docker': ['docker>=2.0.0'],
-        'export': ['http'],
-        'gpu:python_version=="2.7"': ['nvidia-ml-py'],
+        'export': ['bernhard', 'cassandra-driver', 'couchdb', 'elasticsearch',
+                   'influxdb>=1.0.0', 'kafka-python', 'pika', 'potsdb',
+                   'prometheus_client', 'pyzmq', 'statsd'],
+        'folders': ['scandir'],  # python_version<"3.5"
+        'gpu': ['nvidia-ml-py'],  # python_version=="2.7"
         'ip': ['netifaces'],
         'raid': ['pymdstat'],
         'snmp': ['pysnmp'],

@@ -23,6 +23,8 @@ I am your father...
 ...for all Glances exports IF.
 """
 
+import json
+
 from glances.compat import NoOptionError, NoSectionError, iteritems, iterkeys
 from glances.logger import logger
 
@@ -55,11 +57,21 @@ class GlancesExport(object):
 
     def plugins_to_export(self):
         """Return the list of plugins to export."""
-        return ['percpu',
+        return ['cpu',
+                'percpu',
                 'load',
                 'mem',
+                'memswap',
                 'network',
-                'system']
+                'diskio',
+                'fs',
+                'processcount',
+                'ip',
+                'system',
+                'uptime',
+                'sensors',
+                'docker',
+                'uptime']
 
     def load_conf(self, section, mandatories=['host', 'port'], options=None):
         """Load the export <section> configuration in the Glances configuration file.
@@ -112,9 +124,9 @@ class GlancesExport(object):
     def parse_tags(self, tags):
         """Parse tags into a dict.
 
-        tags: a comma separated list of 'key:value' pairs.
+        input tags: a comma separated list of 'key:value' pairs.
             Example: foo:bar,spam:eggs
-        dtags: a dict of tags.
+        output dtags: a dict of tags.
             Example: {'foo': 'bar', 'spam': 'eggs'}
         """
         dtags = {}
@@ -148,7 +160,9 @@ class GlancesExport(object):
             if isinstance(all_stats[plugin], dict):
                 all_stats[plugin].update(all_limits[plugin])
             elif isinstance(all_stats[plugin], list):
-                all_stats[plugin] += all_limits[plugin]
+                # TypeError: string indices must be integers (Network plugin) #1054
+                for i in all_stats[plugin]:
+                    i.update(all_limits[plugin])
             else:
                 continue
             export_names, export_values = self.__build_export(all_stats[plugin])
@@ -170,6 +184,8 @@ class GlancesExport(object):
                 pre_key = ''
             # Walk through the dict
             for key, value in iteritems(stats):
+                if isinstance(value, bool):
+                    value = json.dumps(value)
                 if isinstance(value, list):
                     try:
                         value = value[0]

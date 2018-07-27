@@ -2,6 +2,57 @@
 Glances Version 2
 ==============================================================================
 
+Version 2.11
+============
+
+Enhancements and new features:
+
+    * New export plugin: standard and configurable Restfull exporter (issue #1129)
+    * Add a JSON export module (issue #1130)
+    * [WIP] Refactoring of the WebUI
+
+Bugs corrected:
+
+    * Installing GPU plugin crashes entire Glances (issue #1102)
+    * Potential memory leak in Windows WebUI (issue #1056)
+    * glances_network `OSError: [Errno 19] No such device` (issue #1106)
+    * GPU plugin. <class 'TypeError'>: ... not JSON serializable"> (issue #1112)
+    * PermissionError on macOS (issue #1120)
+    * Cant move up or down in glances --browser (issue #1113)
+    * Unable to give aliases to or hide network interfaces and disks (issue #1126)
+    * `UnicodeDecodeError` on mountpoints with non-breaking spaces (issue #1128)
+
+Installation:
+
+    * Create a Snap of Glances (issue #1101)
+
+Version 2.10
+============
+
+Enhancements and new features:
+
+    * New plugin to scan remote Web sites (URL) (issue #981)
+    * Add trends in the Curses interface (issue #1077)
+    * Add new repeat function to the action (issue #952)
+    * Use -> and <- arrows keys to switch between processing sort (issue #1075)
+    * Refactor __init__ and main scripts (issue #1050)
+    * [WebUI] Improve WebUI for Windows 10 (issue #1052)
+
+Bugs corrected:
+
+    * StatsD export prefix option is ignored (issue #1074)
+    * Some FS and LAN metrics fail to export correctly to StatsD (issue #1068)
+    * Problem with non breaking space in file system name (issue #1065)
+    * TypeError: string indices must be integers (Network plugin) (issue #1054)
+    * No Offline status for timeouted ports? (issue #1084)
+    * When exporting, uptime values loop after 1 day (issue #1092)
+
+Installation:
+
+  * Create a package.sh script to generate .DEB, .RPM and others... (issue #722)
+  ==> https://github.com/nicolargo/glancesautopkg
+  * OSX: can't python setup.py install due to python 3.5 constraint (issue #1064)
+
 Version 2.9.1
 =============
 
@@ -9,7 +60,7 @@ Bugs corrected:
 
     * Glances PerCPU issues with Curses UI on Android (issue #1071)
     * Remove extra } in format string (issue #1073)
-    
+
 Version 2.9.0
 =============
 
