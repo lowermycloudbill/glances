@@ -40,5 +40,6 @@ else
   echo "Nooo"
 fi
 echo $PIP_VERSION
-vercomp $PIP_VERSION "10.0.0" 
+vercomp 1.0 "10.0.0" 
+echo "yoyo"
 echo $?

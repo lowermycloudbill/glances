@@ -174,24 +174,8 @@ else
     exit 1
 
 fi
+
 shopt -u nocasematch
-
-# echo "Install dependancies"
-
-# # Glances issue #922: Do not install PySensors (SENSORS)
-# DEPS="setuptools" 
-
-# echo "Hello"
-
-# PIP_VERSION=`pip --version | cut -d ' ' -f2`
-
-# if [ $PIP_VERSION == "1.0" ]
-# then
-#     # do_with_root pip install --upgrade pip --index-url=https://pypi.python.org/simple/
-# fi
-
-# do_with_root hash -r
-# do_with_root pip install $DEPS
 
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
 CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
