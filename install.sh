@@ -161,6 +161,10 @@ elif [[ $distrib_name == "fedora" ]]; then
     # Install prerequirements
     do_with_root dnf -y install python-pip python-devel gcc #lm_sensors wireless-tools
 
+elif [[ $distrib_name == "SuSE" ]]; then
+
+    zypper --non-interactive in python-pip python-devel gcc python-curses
+
 elif [[ $distrib_name == "arch" ]]; then
     # Arch support
 
