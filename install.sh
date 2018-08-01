@@ -75,12 +75,29 @@ case "$1" in
 esac
 EOF
 
+
 #Let's start this up!
 touch /var/log/glances.log
 chmod +x /etc/init.d/glances
 service glances start
 update-rc.d glances default
 }
+
+setup_systemd() {
+cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
+[Unit]
+Description=Glances
+
+[Service]
+ExecStart=$GLANCES_LOCATION --quiet --export-http
+Restart=on-failure
+RestartSec=30s
+TimeoutSec=30s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+} 
 
 # Execute a command as root (or sudo)
 do_with_root() {
@@ -218,31 +235,16 @@ InstanceType=$INSTANCETYPE
 AvailabilityZone=$AVAILABILITYZONE
 EOF
 
-if [ "$UBUNTU_VERSION" == "12.04" ]
-then
-setup_service
-fi
+if [ $distrib_name == "debian" ]; then
 
-if [ "$UBUNTU_VERSION" == "14.04" ]
-then
-setup_service
-fi
+  if [ "$UBUNTU_VERSION" == "12.04" || "$UBUNTU_VERSION" == "14.04"]; then
+  setup_service
+  fi
 
-if [ "$UBUNTU_VERSION" == "16.04" ] ; then
-cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
-[Unit]
-Description=Glances
 
-[Service]
-ExecStart=$GLANCES_LOCATION --quiet --export-http
-Restart=on-failure
-RestartSec=30s
-TimeoutSec=30s
-
-[Install]
-WantedBy=multi-user.target
-EOF
-#install and start the daemon!
-do_with_root systemctl enable glances.service
-do_with_root systemctl start glances.service &
+  if [ "$UBUNTU_VERSION" == "16.04" ] ; then
+  #install and start the daemon!
+  do_with_root systemctl enable glances.service
+  do_with_root systemctl start glances.service &
+  fi
 fi
