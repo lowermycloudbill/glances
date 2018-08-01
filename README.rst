@@ -45,7 +45,7 @@ add new plugins or exports modules.
 Requirements
 ============
 
-- ``python 2.7,>=3.3``
+- ``python 2.7,>=3.4``
 - ``psutil>=2.0.0`` (better with latest version)
 
 Optional dependencies:
