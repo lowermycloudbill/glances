@@ -56,6 +56,7 @@ class GlancesExport(object):
     def plugins_to_export(self):
         """Return the list of plugins to export."""
         return ['percpu',
+                'cloud',
                 'load',
                 'mem',
                 'network',

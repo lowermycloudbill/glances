@@ -49,20 +49,11 @@ class Export(GlancesExportBulk):
         config.read('/etc/cloudadmin/cloudadmin.conf')
         self.api_key = config.get('CloudAdmin','APIKey')
         self.http_endpoint = config.get('CloudAdmin','URL')
-        #get instance specific information
-        self.demi_code = config.get('CloudProvider','DemideCode')
-        self.instance_id = config.get('CloudProvider','InstanceID')
-        self.instance_type = config.get('CloudProvider','InstanceType')
-        self.availability_zone = config.get('CloudProvider','AvailabilityZone')
 
         metadata = {
           #so we actually know which user is sending us this data
           'api-key' : self.api_key,
           'version' : self.version,
-          'demi-code' : self.demi_code,
-          'instance-id' : self.instance_id,
-          'instance-type' : self.instance_type,
-          'availability-zone' : self.availability_zone
         }
 
         headers = {
