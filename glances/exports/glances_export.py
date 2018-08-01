@@ -57,6 +57,7 @@ class GlancesExport(object):
         """Return the list of plugins to export."""
         return ['percpu',
                 'cloud',
+                'diskio',
                 'load',
                 'mem',
                 'network',
