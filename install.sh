@@ -235,16 +235,17 @@ InstanceType=$INSTANCETYPE
 AvailabilityZone=$AVAILABILITYZONE
 EOF
 
-if [ $distrib_name == "debian" ]; then
+if [[ $distrib_name == "Ubuntu" ]]; then
 
-  if [ "$UBUNTU_VERSION" == "12.04" || "$UBUNTU_VERSION" == "14.04"]; then
-  setup_service
+  if [[ "$UBUNTU_VERSION" == "12.04" || "$UBUNTU_VERSION" == "14.04" ]]; then
+    setup_service
   fi
 
 
-  if [ "$UBUNTU_VERSION" == "16.04" ] ; then
-  #install and start the daemon!
-  do_with_root systemctl enable glances.service
-  do_with_root systemctl start glances.service &
+  if [[ "$UBUNTU_VERSION" == "16.04" ]]; then
+    #install and start the daemon!
+    setup_systemd
+    do_with_root systemctl enable glances.service
+    do_with_root systemctl start glances.service &
   fi
 fi
