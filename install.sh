@@ -79,7 +79,8 @@ EOF
 touch /var/log/glances.log
 chmod +x /etc/init.d/glances
 service glances start
-update-rc.d glances default
+update-rc.d -f glances remove
+update-rc.d -f glances default
 }
 
 # Execute a command as root (or sudo)
@@ -184,8 +185,8 @@ shopt -u nocasematch
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
 CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
 CLOUDADMIN_CONF_URL="https://metrics.cloudadmin.io"
-GLANCES_DIR="glances-0.3.3"
-GLANCES_TARBALL_NAME="glances-0.3.3.tar.gz"
+GLANCES_DIR="glances-0.3.1"
+GLANCES_TARBALL_NAME="glances-0.3.1.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/cloudadmin.io/$GLANCES_TARBALL_NAME"
 
 SYSTEMD_FILE_NAME="glances.service"

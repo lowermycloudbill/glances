@@ -75,7 +75,7 @@ class Export(GlancesExportBulk):
     def flush(self):
       self.bulk['metadata'] = self.metadata
       self.bulk['sent_at'] = str(datetime.datetime.utcnow())
-      if os.environ['TEST']:
+      if 'TEST' in os.environ:
         f = open('/tmp/glances-out', 'w')
         f.write(json.dumps(self.bulk))
         f.close()

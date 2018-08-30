@@ -121,7 +121,7 @@ def main():
     time.sleep(server_start_interval)
     data['server_start_interval'] = server_start_interval
 
-    if os.environ['TEST']:
+    if 'TEST' in os.environ:
       f = open('/tmp/glances-init', 'w')
       f.write(json.dumps(data))
       f.close()
