@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """CSV interface class."""
-
+import os
 import csv
 import sys
 import time
@@ -75,5 +75,11 @@ class Export(GlancesExportBulk):
     def flush(self):
       self.bulk['metadata'] = self.metadata
       self.bulk['sent_at'] = str(datetime.datetime.utcnow())
-      r = requests.post(self.http_endpoint, data=json.dumps(self.bulk), headers=self.headers)
+      if os.environ['TEST']:
+        f = open('/tmp/glances-out', 'w')
+        f.write(json.dumps(self.bulk))
+        f.close()
+        os._exit(0)
+      else:
+        r = requests.post(self.http_endpoint, data=json.dumps(self.bulk), headers=self.headers)
       self.bulk = {}

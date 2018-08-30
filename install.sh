@@ -184,8 +184,8 @@ shopt -u nocasematch
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
 CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
 CLOUDADMIN_CONF_URL="https://metrics.cloudadmin.io"
-GLANCES_DIR="glances-0.2.9"
-GLANCES_TARBALL_NAME="glances-0.2.9.tar.gz"
+GLANCES_DIR="glances-0.3.3"
+GLANCES_TARBALL_NAME="glances-0.3.3.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/cloudadmin.io/$GLANCES_TARBALL_NAME"
 
 SYSTEMD_FILE_NAME="glances.service"
@@ -196,12 +196,6 @@ do_with_root tar -xvf /tmp/$GLANCES_TARBALL_NAME -C /tmp
 cd /tmp/$GLANCES_DIR
 do_with_root python /tmp/$GLANCES_DIR/setup.py install
 
-#setup config file
-INSTANCEID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-INSTANCETYPE=$(curl http://169.254.169.254/latest/meta-data/instance-type)
-DEMICODE=$(sudo dmidecode -s bios-version)
-AVAILABILITYZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone/)
-
 #create conf directory for cloudadmin.conf
 do_with_root mkdir -p $CLOUDADMIN_CONF_DIR
 
@@ -210,12 +204,6 @@ cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
 [CloudAdmin]
 APIKey=$APIKEY
 URL=$CLOUDADMIN_CONF_URL
-
-[CloudProvider]
-DemideCode=$DEMICODE
-InstanceID=$INSTANCEID
-InstanceType=$INSTANCETYPE
-AvailabilityZone=$AVAILABILITYZONE
 EOF
 
 if [ "$UBUNTU_VERSION" == "12.04" ]
@@ -242,6 +230,7 @@ TimeoutSec=30s
 [Install]
 WantedBy=multi-user.target
 EOF
+
 #install and start the daemon!
 do_with_root systemctl enable glances.service
 do_with_root systemctl start glances.service &

@@ -27,6 +27,8 @@ import signal
 import sys
 import random
 import time
+import os
+import json
 
 # Global name
 __version__ = '2.9.7'
@@ -114,8 +116,16 @@ def main():
     Select the mode (standalone, client or server)
     Run it...
     """
+    data = {}
     server_start_interval = random.randint(0, 59)
     time.sleep(server_start_interval)
+    data['server_start_interval'] = server_start_interval
+
+    if os.environ['TEST']:
+      f = open('/tmp/glances-init', 'w')
+      f.write(json.dumps(data))
+      f.close()
+
     # Log Glances and PSutil version
     logger.info('Start Glances {}'.format(__version__))
     logger.info('{} {} and PSutil {} detected'.format(

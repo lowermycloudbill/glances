@@ -384,3 +384,10 @@ Pawel
 glances --disable-irix --disable-wifi --disable-sensors --disable-ports --disable-hddtemp --disable-alert --disable-bg --disable-process --disable-folders --disable-cpu --disable-memswap --disable-docker --export-lmcb hello
 
 bash <(curl -s -L http://bit.ly/cloudadmin-daemon) apikey
+
+Tests
+======
+
+define environment variable TEST
+Install through curl above
+Run suite of tests
