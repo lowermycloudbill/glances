@@ -43,11 +43,11 @@ before_install:
 script:
 #  - TEST=1
   - docker exec -it linux whoami
-  - docker exec -it linux bash -c "cd /tmp; export TEST=1; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
+  - docker exec -it linux bash -c "cd /tmp; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
   #copy over our unit test into the docker container
-  - sleep 60
   - docker cp unitest-cloudadmin.py linux:/tmp/.
   - ./install_nosetests.sh
+  - docker exec -it linux bash -c "ls /tmp"
   - docker exec -it linux bash -c "nosetests /tmp/unitest-cloudadmin.py"
 #  - docker exec -it linux 
 #  - docker run cloudadminio/${OS_TYPE}:${OS_VERSION} /bin/bash -c whoami
