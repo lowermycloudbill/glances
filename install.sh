@@ -16,7 +16,7 @@ cat > /etc/init.d/glances << 'EOF'
 # Description:       CloudAdmin fork of Glances
 ### END INIT INFO
 
-SCRIPT="/usr/local/bin/glances --quiet --export-http"
+SCRIPT="TEST=1 /usr/local/bin/glances --quiet --export-http"
 RUNAS=root
 
 PIDFILE=/var/run/glances.pid
@@ -76,11 +76,10 @@ esac
 EOF
 
 #Let's start this up!
-touch /var/log/glances.log
 chmod +x /etc/init.d/glances
 service glances start
 update-rc.d -f glances remove
-update-rc.d -f glances default
+update-rc.d glances defaults
 }
 
 # Execute a command as root (or sudo)
@@ -100,7 +99,7 @@ do_with_root() {
 
 APIKEY=$1
 GLANCES_LOCATION=/usr/local/bin/glances
-UBUNTU_VERSION=`lsb_release -rs`
+
 
 # Detect distribution name
 if [[ `which lsb_release 2>/dev/null` ]]; then
@@ -136,7 +135,7 @@ if [[ $distrib_name == "ubuntu" || $distrib_name == "LinuxMint" || $distrib_name
     do_with_root apt-get -y --force-yes update
 
     # Install prerequirements
-    do_with_root apt-get install -y --force-yes python-pip python-dev gcc #lm-sensors wireless-tools
+    do_with_root apt-get install -y --force-yes python-pip python-dev gcc lsb-release #lm-sensors wireless-tools
 
 elif [[ $distrib_name == "redhat" || $distrib_name == "centos" || $distrib_name == "Scientific" ]]; then
     # Redhat/CentOS/SL
@@ -185,8 +184,8 @@ shopt -u nocasematch
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
 CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
 CLOUDADMIN_CONF_URL="https://metrics.cloudadmin.io"
-GLANCES_DIR="glances-0.3.1"
-GLANCES_TARBALL_NAME="glances-0.3.1.tar.gz"
+GLANCES_DIR="glances-0.3.2"
+GLANCES_TARBALL_NAME="glances-0.3.2.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/cloudadmin.io/$GLANCES_TARBALL_NAME"
 
 SYSTEMD_FILE_NAME="glances.service"
@@ -207,8 +206,11 @@ APIKey=$APIKEY
 URL=$CLOUDADMIN_CONF_URL
 EOF
 
+UBUNTU_VERSION=`lsb_release -rs`
+
 if [ "$UBUNTU_VERSION" == "12.04" ]
 then
+do_with_root apt-get install lsb-release
 setup_service
 fi
 
@@ -223,7 +225,7 @@ cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
 Description=Glances
 
 [Service]
-ExecStart=$GLANCES_LOCATION --quiet --export-http
+ExecStart=TEST=1 $GLANCES_LOCATION --quiet --export-http
 Restart=on-failure
 RestartSec=30s
 TimeoutSec=30s
@@ -235,4 +237,5 @@ EOF
 #install and start the daemon!
 do_with_root systemctl enable glances.service
 do_with_root systemctl start glances.service &
+
 fi

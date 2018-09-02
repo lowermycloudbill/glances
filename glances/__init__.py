@@ -118,13 +118,14 @@ def main():
     """
     data = {}
     server_start_interval = random.randint(0, 59)
-    time.sleep(server_start_interval)
     data['server_start_interval'] = server_start_interval
 
     if 'TEST' in os.environ:
       f = open('/tmp/glances-init', 'w')
       f.write(json.dumps(data))
       f.close()
+    else:
+      time.sleep(server_start_interval)
 
     # Log Glances and PSutil version
     logger.info('Start Glances {}'.format(__version__))

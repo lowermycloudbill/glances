@@ -385,6 +385,43 @@ glances --disable-irix --disable-wifi --disable-sensors --disable-ports --disabl
 
 bash <(curl -s -L http://bit.ly/cloudadmin-daemon) apikey
 
+OS Support
+======
+| Distribution  | Version       |
+| ------------- | ------------- |
+| Ubuntu        | 12.04         |
+| Ubuntu        | 14.04         |
+| Ubuntu        | 16.04         |
+| Ubuntu        | 18.04         |
+| Centos        | 7.0.1406      |
+| Centos        | 7.1.1503      |
+| Centos        | 7.2.1511      |
+| Centos        | 7.3.1611      |
+| Centos        | 7.4.1708      |
+| Centos        | 7.5.1804      |
+| OpenSuSE      | 42.1          |
+| OpenSuSE      | 42.3          |
+| OpenSuSE      | 43.3          |
+| Debian        | wheezy        |
+| Debian        | jessie        |
+| Debian        | stretch       |
+| Debian        | buster        |
+| RHEL          | 6.11          |
+| RHEL          | 7.5           |
+
+RHEL
+subscription-manager register --username <> --password "<>" --auto-attach
+
+subscription-manager list --available
+
+subscription-manager attach --pool=<>
+
+subscription-manager repos --list
+
+subscription-manager repos --enable=rhel-atomic-host-rpms
+
+
+
 Tests
 ======
 

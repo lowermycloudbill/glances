@@ -1,4 +1,5 @@
 import json
+import ConfigParser
 
 def load_json_file(file_path):
   with open(file_path, 'r') as f:
@@ -14,5 +15,7 @@ def test_http_flush():
   print file_contents
 
 def test_config_file():
-  file_contents = load_json_file('/etc/cloudadmin/cloudadmin.conf')
-  print file_contents
+  config = ConfigParser.ConfigParser()
+  config.read('/etc/cloudadmin/cloudadmin.conf')
+  assert config.get('CloudAdmin','APIKey') == "abcd1234"
+  assert config.get('CloudAdmin','URL') == "https://metrics.cloudadmin.io"
