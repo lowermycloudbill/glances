@@ -210,7 +210,6 @@ UBUNTU_VERSION=`lsb_release -rs`
 
 if [ "$UBUNTU_VERSION" == "12.04" ]
 then
-do_with_root apt-get install lsb-release
 setup_service
 fi
 
