@@ -47,8 +47,8 @@ script:
   #copy over our unit test into the docker container
   - docker cp unitest-cloudadmin.py linux:/tmp/.
   - ./install_nosetests.sh
-  - docker exec -it linux bash -c "ls /tmp"
-  - docker exec -it linux bash -c "ps auxw"
+#  - docker exec -it linux bash -c "ls /tmp"
+#  - docker exec -it linux bash -c "ps auxw"
   - docker exec -it linux bash -c "cat /var/log/glances.log"
   - docker exec -it linux bash -c "TEST=1 glances --quiet --export-http"
   - docker exec -it linux bash -c "nosetests /tmp/unitest-cloudadmin.py"
