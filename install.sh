@@ -163,7 +163,7 @@ elif [[ $distrib_name == "fedora" ]]; then
 
 elif [[ $distrib_name == "SuSE" ]]; then
 
-    zypper --non-interactive in python-pip python-devel gcc python-curses
+    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar
 
 elif [[ $distrib_name == "arch" ]]; then
     # Arch support
