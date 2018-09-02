@@ -48,6 +48,7 @@ script:
   - docker cp unitest-cloudadmin.py linux:/tmp/.
   - ./install_nosetests.sh
   - docker exec -it linux bash -c "ls /tmp"
+  - docker exec -it linux bash -c "ps auxw"
   - docker exec -it linux bash -c "nosetests /tmp/unitest-cloudadmin.py"
 #  - docker exec -it linux 
 #  - docker run cloudadminio/${OS_TYPE}:${OS_VERSION} /bin/bash -c whoami
