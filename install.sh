@@ -16,7 +16,7 @@ cat > /etc/init.d/glances << 'EOF'
 # Description:       CloudAdmin fork of Glances
 ### END INIT INFO
 
-SCRIPT="TEST=1 /usr/local/bin/glances --export-http"
+SCRIPT="TEST=1 /usr/local/bin/glances --quiet --export-http"
 RUNAS=root
 
 PIDFILE=/var/run/glances.pid
@@ -77,9 +77,9 @@ EOF
 
 #Let's start this up!
 chmod +x /etc/init.d/glances
-service glances start
 update-rc.d -f glances remove
 update-rc.d glances defaults
+service glances start
 }
 
 # Execute a command as root (or sudo)
