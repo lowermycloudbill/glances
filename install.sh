@@ -135,13 +135,13 @@ if [[ $distrib_name == "ubuntu" || $distrib_name == "LinuxMint" || $distrib_name
     do_with_root apt-get -y --force-yes update
 
     # Install prerequirements
-    do_with_root apt-get install -y --force-yes python-pip python-dev gcc lsb-release #lm-sensors wireless-tools
+    do_with_root apt-get install -y --force-yes python-pip python-dev gcc lsb-release wget curl tar
 
 elif [[ $distrib_name == "redhat" || $distrib_name == "centos" || $distrib_name == "Scientific" ]]; then
     # Redhat/CentOS/SL
 
     # Install prerequirements
-    do_with_root yum -y install wget python-devel python-setuptools gcc #lm_sensors wireless-tools
+    do_with_root yum -y install wget python-devel python-setuptools gcc wget curl tar
     do_with_root easy_install pip
     do_with_root pip install -U pip setuptools
 
@@ -152,14 +152,14 @@ elif [[ $distrib_name == "centminmod" ]]; then
     # /CentOS min based
 
     # Install prerequirements
-    do_with_root yum -y install python-devel gcc #lm_sensors wireless-tools
+    do_with_root yum -y install python-devel gcc wget curl tar
     do_with_root wget -O- https://bootstrap.pypa.io/get-pip.py | python && $(which pip) install -U pip && ln -s $(which pip) /usr/bin/pip
     
 elif [[ $distrib_name == "fedora" ]]; then
     # Fedora
 
     # Install prerequirements
-    do_with_root dnf -y install python-pip python-devel gcc #lm_sensors wireless-tools
+    do_with_root dnf -y install python-pip python-devel gcc wget curl tar
 
 elif [[ $distrib_name == "SuSE" ]]; then
 
@@ -169,7 +169,7 @@ elif [[ $distrib_name == "arch" ]]; then
     # Arch support
 
     # Headers not needed for Arch, shipped with regular python packages
-    do_with_root pacman -S python-pip #lm_sensors wireless_tools --noconfirm
+    do_with_root pacman -S python-pip wget curl tar
 
 else
     # Unsupported system
