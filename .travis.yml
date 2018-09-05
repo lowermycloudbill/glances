@@ -14,7 +14,7 @@ env:
   - OS_TYPE=centos OS_VERSION=7.1.1503
   - OS_TYPE=centos OS_VERSION=7.0.1406
 #opensuse
-  - OS_TYPE=opensuse OS_VERSION=15.0
+#  - OS_TYPE=opensuse OS_VERSION=15.0
   - OS_TYPE=opensuse OS_VERSION=42.3
   - OS_TYPE=opensuse OS_VERSION=42.2
   - OS_TYPE=opensuse OS_VERSION=42.1
@@ -23,9 +23,10 @@ env:
   - OS_TYPE=debian OS_VERSION=jessie
   - OS_TYPE=debian OS_VERSION=stretch
   - OS_TYPE=debian OS_VERSION=buster
-#rhel
-  - OS_TYPE=rhel OS_VERSION=6.10
-  - OS_TYPE=rhel OS_VERSION=7.5
+#fedora
+  - OS_TYPE=fedora OS_VERSION=27
+  - OS_TYPE=fedora OS_VERSION=28
+  - OS_TYPE=fedora OS_VERSION=29
 #kali
 #windows
 

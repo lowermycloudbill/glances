@@ -100,6 +100,11 @@ do_with_root() {
 APIKEY=$1
 GLANCES_LOCATION=/usr/local/bin/glances
 
+if ! [[ `find 2>/dev/null` ]]; then
+  echo "Please install findutils"
+  exit 1
+fi
+
 
 # Detect distribution name
 if [[ `which lsb_release 2>/dev/null` ]]; then
@@ -110,6 +115,7 @@ else
     lsb_files=`find /etc -type f -maxdepth 1 \( ! -wholename /etc/os-release ! -wholename /etc/lsb-release -wholename /etc/\*release -o -wholename /etc/\*version \) 2> /dev/null`
     for file in $lsb_files; do
         if [[ $file =~ /etc/(.*)[-_] ]]; then
+            echo $file
             distrib_name=${BASH_REMATCH[1]}
             break
         else
