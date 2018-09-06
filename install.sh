@@ -181,7 +181,6 @@ else
     echo "Sorry, GlancesAutoInstall script is not compliant with your system."
     echo "Please read: https://github.com/nicolargo/glances#installation"
     exit 1
-
 fi
 
 shopt -u nocasematch
