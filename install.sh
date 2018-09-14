@@ -100,10 +100,51 @@ do_with_root() {
 APIKEY=$1
 GLANCES_LOCATION=/usr/local/bin/glances
 
-if ! [[ `find 2>/dev/null` ]]; then
-  echo "Please install findutils"
-  exit 1
+shopt -s nocasematch
+# Let's do the installation
+if [[ `apt-get 2>/dev/null` ]]; then
+    # Ubuntu/Debian variants
+
+    # Set non interactive mode
+    set -eo pipefail
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Make sure the package repository is up to date
+    do_with_root apt-get -y --force-yes update
+
+    # Install prerequirements
+    do_with_root apt-get install -y --force-yes python-pip python-dev gcc lsb-release wget curl tar
+
+elif [[ `dnf 2>/dev/null` ]]; then
+    # Fedora
+
+    # Install prerequirements
+    do_with_root dnf -y install python-pip python-devel gcc wget curl tar
+elif [[ `yum 2>/dev/null` ]]; then
+    # Redhat/CentOS/SL
+
+    # Install prerequirements
+    do_with_root yum -y install wget python-devel python-setuptools gcc wget curl tar
+    do_with_root easy_install pip
+    do_with_root pip install -U pip setuptools
+
+    #Glances bin in different location
+    GLANCES_LOCATION=/bin/glances
+elif [[ `zypper 2>/dev/null` ]]; then
+    # SuSE/openSuSE
+    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar
+elif [[ `pacman 2>/dev/null` ]]; then
+    # Arch support
+
+    # Headers not needed for Arch, shipped with regular python packages
+    do_with_root pacman -S python-pip wget curl tar
+else
+    # Unsupported system
+    echo "Sorry, GlancesAutoInstall script is not compliant with your system."
+    echo "Please read: https://github.com/nicolargo/glances#installation"
+    exit 1
 fi
+shopt -u nocasematch
 
 
 # Detect distribution name
@@ -127,63 +168,6 @@ fi
 
 echo "Detected system:" $distrib_name
 
-shopt -s nocasematch
-# Let's do the installation
-if [[ $distrib_name == "ubuntu" || $distrib_name == "LinuxMint" || $distrib_name == "debian" || $distrib_name == "Raspbian" ]]; then
-    # Ubuntu/Debian variants
-
-    # Set non interactive mode
-    set -eo pipefail
-    export DEBIAN_FRONTEND=noninteractive
-
-    # Make sure the package repository is up to date
-    do_with_root apt-get -y --force-yes update
-
-    # Install prerequirements
-    do_with_root apt-get install -y --force-yes python-pip python-dev gcc lsb-release wget curl tar
-
-elif [[ $distrib_name == "redhat" || $distrib_name == "centos" || $distrib_name == "Scientific" ]]; then
-    # Redhat/CentOS/SL
-
-    # Install prerequirements
-    do_with_root yum -y install wget python-devel python-setuptools gcc wget curl tar
-    do_with_root easy_install pip
-    do_with_root pip install -U pip setuptools
-
-    #Glances bin in different location
-    GLANCES_LOCATION=/bin/glances
-
-elif [[ $distrib_name == "centminmod" ]]; then
-    # /CentOS min based
-
-    # Install prerequirements
-    do_with_root yum -y install python-devel gcc wget curl tar
-    do_with_root wget -O- https://bootstrap.pypa.io/get-pip.py | python && $(which pip) install -U pip && ln -s $(which pip) /usr/bin/pip
-    
-elif [[ $distrib_name == "fedora" ]]; then
-    # Fedora
-
-    # Install prerequirements
-    do_with_root dnf -y install python-pip python-devel gcc wget curl tar
-
-elif [[ $distrib_name == "SuSE" ]]; then
-
-    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar
-
-elif [[ $distrib_name == "arch" ]]; then
-    # Arch support
-
-    # Headers not needed for Arch, shipped with regular python packages
-    do_with_root pacman -S python-pip wget curl tar
-
-else
-    # Unsupported system
-    echo "Sorry, GlancesAutoInstall script is not compliant with your system."
-    echo "Please read: https://github.com/nicolargo/glances#installation"
-    exit 1
-fi
-
-shopt -u nocasematch
 
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
 CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
