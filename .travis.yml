@@ -44,9 +44,9 @@ before_install:
 script:
 #  - docker cp install_curl.sh linux:/tmp/.
   - |
-    if [ $OS_TYPE == 'opensuse' ]; then
+    if [ $OS_TYPE == "opensuse" ]; then
       docker exec -it linux bash -c "zypper --non-interactive curl"
-    elif [ $OS_TYPE == 'ubuntu' || $OS_TYPE == 'debian' ]; then
+    elif [ $OS_TYPE == "ubuntu" || $OS_TYPE == "debian" ]; then
       docker exec -it linux bash -c "apt-get update && apt-get install -y curl"
     fi
 #  - docker exec -it linux bash -c "./tmp/install_curl.sh"
