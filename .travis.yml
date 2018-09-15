@@ -48,7 +48,11 @@ script:
       docker exec -it linux bash -c "zypper --non-interactive curl";
     fi
   - |
-    if [ $OS_TYPE == "ubuntu" || $OS_TYPE == "debian" ]; then
+    if [ $OS_TYPE == "ubuntu" ]; then
+      docker exec -it linux bash -c "apt-get update && apt-get install -y curl";
+    fi
+  - |
+    if [ $OS_TYPE == "debian" ]; then
       docker exec -it linux bash -c "apt-get update && apt-get install -y curl";
     fi
 #  - docker exec -it linux bash -c "./tmp/install_curl.sh"
