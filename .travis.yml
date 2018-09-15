@@ -44,7 +44,7 @@ before_install:
 script:
 #  - TEST=1
   - docker cp install_curl.sh linux:/tmp/.
-  - docker cp install_curl.sh linux bash -c "./tmp/install_curl.sh"
+  - docker exec -it linux bash -c "./tmp/install_curl.sh"
   - docker exec -it linux bash -c "cd /tmp; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
   #copy over our unit test into the docker container
   - docker cp unitest-cloudadmin.py linux:/tmp/.
