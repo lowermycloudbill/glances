@@ -55,6 +55,10 @@ script:
     if [ $OS_TYPE == "debian" ]; then
       docker exec -it linux bash -c "apt-get update && apt-get install -y curl";
     fi
+  - |
+    if [ $OS_TYPE == "debian" ]; then
+      docker exec -it linux bash -c "zypper --non-interactive in curl";
+    fi
 #  - docker exec -it linux bash -c "./tmp/install_curl.sh"
   - docker exec -it linux bash -c "cd /tmp; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
   #copy over our unit test into the docker container
