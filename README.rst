@@ -380,6 +380,7 @@ LGPLv3. See ``COPYING`` for more details.
 
 Pawel
 =======
+curl is required to start the installation
 
 glances --disable-irix --disable-wifi --disable-sensors --disable-ports --disable-hddtemp --disable-alert --disable-bg --disable-process --disable-folders --disable-cpu --disable-memswap --disable-docker --export-lmcb hello
 

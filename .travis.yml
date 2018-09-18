@@ -6,26 +6,27 @@ env:
   - OS_TYPE=ubuntu OS_VERSION=14.04
   - OS_TYPE=ubuntu OS_VERSION=16.04
   - OS_TYPE=ubuntu OS_VERSION=18.04
-##centos
-#  - OS_TYPE=centos OS_VERSION=7.5.1804
-#  - OS_TYPE=centos OS_VERSION=7.4.1708
-#  - OS_TYPE=centos OS_VERSION=7.3.1611
-#  - OS_TYPE=centos OS_VERSION=7.2.1511
-#  - OS_TYPE=centos OS_VERSION=7.1.1503
-#  - OS_TYPE=centos OS_VERSION=7.0.1406
-##opensuse
-##  - OS_TYPE=opensuse OS_VERSION=15.0
-#  - OS_TYPE=opensuse OS_VERSION=42.3
-#  - OS_TYPE=opensuse OS_VERSION=42.2
-#  - OS_TYPE=opensuse OS_VERSION=42.1
-##debian
-#  - OS_TYPE=debian OS_VERSION=wheezy
-#  - OS_TYPE=debian OS_VERSION=jessie
-#  - OS_TYPE=debian OS_VERSION=stretch
-#  - OS_TYPE=debian OS_VERSION=buster
-##rhel
-#  - OS_TYPE=rhel OS_VERSION=6.10
-#  - OS_TYPE=rhel OS_VERSION=7.5
+#centos
+  - OS_TYPE=centos OS_VERSION=7.5.1804
+  - OS_TYPE=centos OS_VERSION=7.4.1708
+  - OS_TYPE=centos OS_VERSION=7.3.1611
+  - OS_TYPE=centos OS_VERSION=7.2.1511
+  - OS_TYPE=centos OS_VERSION=7.1.1503
+  - OS_TYPE=centos OS_VERSION=7.0.1406
+#opensuse
+#  - OS_TYPE=opensuse OS_VERSION=15.0
+  - OS_TYPE=opensuse OS_VERSION=42.3
+  - OS_TYPE=opensuse OS_VERSION=42.2
+  - OS_TYPE=opensuse OS_VERSION=42.1
+#debian
+  - OS_TYPE=debian OS_VERSION=wheezy
+  - OS_TYPE=debian OS_VERSION=jessie
+  - OS_TYPE=debian OS_VERSION=stretch
+  - OS_TYPE=debian OS_VERSION=buster
+#fedora
+  - OS_TYPE=fedora OS_VERSION=26
+  - OS_TYPE=fedora OS_VERSION=27
+  - OS_TYPE=fedora OS_VERSION=28
 #kali
 #windows
 
@@ -41,19 +42,23 @@ before_install:
   - sudo docker run -i -t -d --name linux cloudadminio/${OS_TYPE}:${OS_VERSION} /bin/bash
 #try and run this command
 script:
-#  - TEST=1
-  - docker exec -it linux whoami
-  - docker exec -it linux bash -c "cd /tmp; export TEST=1; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
+#  - docker cp install_curl.sh linux:/tmp/.
+  - |
+    if [ $OS_TYPE == "opensuse" ]; then
+      docker exec -it linux bash -c "zypper --non-interactive in curl";
+    fi
+  - |
+    if [ $OS_TYPE == "ubuntu" ]; then
+      docker exec -it linux bash -c "apt-get update && apt-get install -y curl";
+    fi
+  - |
+    if [ $OS_TYPE == "debian" ]; then
+      docker exec -it linux bash -c "apt-get update && apt-get install -y curl";
+    fi
+#  - docker exec -it linux bash -c "./tmp/install_curl.sh"
+  - docker exec -it linux bash -c "cd /tmp; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
   #copy over our unit test into the docker container
-  - sleep 60
   - docker cp unitest-cloudadmin.py linux:/tmp/.
   - ./install_nosetests.sh
+  - docker exec -it linux bash -c "TEST=1 glances --quiet --export-http"
   - docker exec -it linux bash -c "nosetests /tmp/unitest-cloudadmin.py"
-#  - docker exec -it linux 
-#  - docker run cloudadminio/${OS_TYPE}:${OS_VERSION} /bin/bash -c whoami
-#  - docker run ${IMAGE} cd /tmp; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234; cat /etc/cloudadmin/cloudadmin.conf
-#  - docker run cloudadminio/${OS_TYPE}:${OS_VERSION} /bin/bash -c "bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
-#  - docker run cloudadminio/${OS_TYPE}:${OS_VERSION} /bin/bash -c "cat /etc/cloudadmin/cloudadmin.conf"
-#  - IMAGE=`docker images -q`; docker cp unitest-cloudadmin.py $IMAGE:/tmp/
-#  - cat /tmp/unitest-cloudadmin.py
-#  - cat /etc/cloudadmin/cloudadmin.conf

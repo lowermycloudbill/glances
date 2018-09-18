@@ -11,7 +11,7 @@ def test_random_start():
   print file_contents
 
 def test_http_flush():
-  file_contents = load_json_file('/tmp/glances-init')
+  file_contents = load_json_file('/tmp/glances-out')
   print file_contents
 
 def test_config_file():
