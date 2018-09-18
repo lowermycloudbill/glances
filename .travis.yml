@@ -58,38 +58,7 @@ script:
 #  - docker exec -it linux bash -c "./tmp/install_curl.sh"
   - docker exec -it linux bash -c "cd /tmp; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
   #copy over our unit test into the docker container
-  - docker cp glances_initd.sh linux:/tmp/.
-  - docker cp glances_systemd.sh linux:/tmp/.
   - docker cp unitest-cloudadmin.py linux:/tmp/.
   - ./install_nosetests.sh
-  - |
-    if [ $OS_TYPE == "debian" ]; then
-      if [ $OS_VERSION == "wheezy" ]; then
-        docker exec -it linux bash -c "/tmp/glances_initd.sh"
-      else
-        docker exec -it linux bash -c "/tmp/glances_systemd.sh"
-      fi
-    fi
-  - |
-    if [ $OS_TYPE == "centos" ]; then
-      docker exec -it linux bash -c "/tmp/glances_systemd.sh"
-    fi
-  - |
-    if [ $OS_TYPE == "opensuse" ]; then
-      docker exec -it linux bash -c "/tmp/glances_systemd.sh"
-    fi
-  - |
-    if [ $OS_TYPE == "fedora" ]; then
-      docker exec -it linux bash -c "/tmp/glances_systemd.sh"
-    fi
-  - |
-    if [ $OS_TYPE == "ubuntu" ]; then
-      if [ $OS_VERSION == "12.04" ]; then
-        docker exec -it linux bash -c "/tmp/glances_initd.sh"
-      elif [ $OS_VERSION == "14.04" ]; then
-        docker exec -it linux bash -c "/tmp/glances_initd.sh"
-      else
-        docker exec -it linux bash -c "/tmp/glances_systemd.sh"
-      fi
-    fi
+  - docker exec -it linux bash -c "TEST=1 glances --quiet --export-http"
   - docker exec -it linux bash -c "nosetests /tmp/unitest-cloudadmin.py"
