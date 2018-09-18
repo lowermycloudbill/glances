@@ -70,28 +70,6 @@ fi
 shopt -u nocasematch
 
 
-# Detect distribution name
-if [[ `which lsb_release 2>/dev/null` ]]; then
-    # lsb_release available
-    distrib_name=`lsb_release -is`
-else
-    # lsb_release not available
-    lsb_files=`find /etc -type f -maxdepth 1 \( ! -wholename /etc/os-release ! -wholename /etc/lsb-release -wholename /etc/\*release -o -wholename /etc/\*version \) 2> /dev/null`
-    for file in $lsb_files; do
-        if [[ $file =~ /etc/(.*)[-_] ]]; then
-            distrib_name=${BASH_REMATCH[1]}
-            break
-        else
-            echo "Sorry, GlancesAutoInstall script is not compliant with your system."
-            echo "Please read: https://github.com/nicolargo/glances#installation"
-            exit 1
-        fi
-    done
-fi
-
-echo "Detected system:" $distrib_name
-
-
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
 CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
 CLOUDADMIN_CONF_URL="https://metrics.cloudadmin.io"

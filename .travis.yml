@@ -58,7 +58,17 @@ script:
 #  - docker exec -it linux bash -c "./tmp/install_curl.sh"
   - docker exec -it linux bash -c "cd /tmp; bash <(curl -s -L http://bit.ly/cloudadmin-daemon) abcd1234"
   #copy over our unit test into the docker container
+  - docker cp glances_initd.sh linux:/tmp/.
+  - docker cp glances_systemd.sh linux:/tmp/.
   - docker cp unitest-cloudadmin.py linux:/tmp/.
   - ./install_nosetests.sh
+  - |
+    if [ $OS_TYPE == "debian" ]; then
+      if [ $OS_VERSION == "wheezy" ]; then
+        echo "debian wheezy detected.";
+      else
+        echo "debian wheezy not detected.";
+      fi
+    fi
   - docker exec -it linux bash -c "TEST=1 glances --quiet --export-http"
   - docker exec -it linux bash -c "nosetests /tmp/unitest-cloudadmin.py"
