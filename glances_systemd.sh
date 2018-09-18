@@ -5,7 +5,7 @@ cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
 Description=Glances
 
 [Service]
-ExecStart=$GLANCES_LOCATION --quiet --export-http
+ExecStart=TEST=1 $GLANCES_LOCATION --quiet --export-http
 Restart=on-failure
 RestartSec=30s
 TimeoutSec=30s
