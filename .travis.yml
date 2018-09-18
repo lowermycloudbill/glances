@@ -62,7 +62,6 @@ script:
   - docker cp glances_systemd.sh linux:/tmp/.
   - docker cp unitest-cloudadmin.py linux:/tmp/.
   - ./install_nosetests.sh
-  - docker exec -it linux bash -c "export TEST=1"
   - |
     if [ $OS_TYPE == "debian" ]; then
       if [ $OS_VERSION == "wheezy" ]; then
