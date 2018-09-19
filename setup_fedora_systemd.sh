@@ -2,7 +2,7 @@
 
 SYSTEMD_FILE_NAME="glances.service"
 SYSTEMD_DIRECTORY="/etc/systemd/system"
-GLANCES_LOCATION=/usr/local/bin/glances
+GLANCES_LOCATION=/usr/bin/glances
 
 cat <<EOF > $SYSTEMD_DIRECTORY/$SYSTEMD_FILE_NAME
 [Unit]
