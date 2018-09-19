@@ -21,8 +21,6 @@ do_with_root() {
 }
 
 APIKEY=$1
-GLANCES_LOCATION=/usr/local/bin/glances
-
 shopt -s nocasematch
 # Let's do the installation
 if [[ `apt-get 2>/dev/null` ]]; then
@@ -42,7 +40,7 @@ elif [[ `dnf 2>/dev/null` ]]; then
     # Fedora
 
     # Install prerequirements
-    do_with_root dnf -y install python-pip python-devel gcc wget curl tar
+    do_with_root dnf -y install python-pip python-devel gcc wget curl tar --nogpgcheck
 elif [[ `yum 2>/dev/null` ]]; then
     # Redhat/CentOS/SL
 
@@ -51,8 +49,6 @@ elif [[ `yum 2>/dev/null` ]]; then
     do_with_root easy_install pip
     do_with_root pip install -U pip setuptools
 
-    #Glances bin in different location
-    GLANCES_LOCATION=/bin/glances
 elif [[ `zypper 2>/dev/null` ]]; then
     # SuSE/openSuSE
     zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar
