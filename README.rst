@@ -15,11 +15,17 @@ If you have any problems please do not hestitate to reach out to
 
 Installation
 ============
+Sign up for a CloudAdmin account, once you register you will recieve a APIKey. With that APIKey you can install our Daemon on each one of your servers by running the following command:
 
-Usage
-=====
+bash <(curl -s -L http://bit.ly/cloudadmin-daemon) APIKey
 
-Currently we support the following Linux distributions:
+Your servers will immediately start reporting into our system.
+
+To setup init.d:
+PLACEHOLDER
+
+To setup systemd:
+PLACEHOLDER
 
 OS Support
 ======
@@ -49,21 +55,8 @@ Tested on the following operating systems:
 | RHEL          | 7.5           |
 
 
-To install this Daemon and use it please sign up for a CloudAdmin.io account ()
-and on the utilization page, please note your apikey, you can then execute:
-
-bash <(curl -s -L http://bit.ly/cloudadmin-daemon) apikey
-
-To setup init.d:
-
-To setup systemd:
-
-
-
-
 Author
 ======
-
 CloudAdmin.io <support@cloudadmin.io>
 
 
@@ -95,17 +88,17 @@ define environment variable TEST
 Install through curl above
 Run suite of tests
 
-Source
-======
-
-Please note that this is a fork of https://github.com/nicolargo/glances
-
 Changes
 ======
 
 During boot there is a random sleep, which helps distribute load to our backend.
 Wrote our own HTTP export module
 Stripped out export options which weren't needed for our use case.
+
+Source
+======
+
+Please note that this is a fork of https://github.com/nicolargo/glances
 
 License
 =======
