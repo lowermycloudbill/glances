@@ -17,7 +17,14 @@ Installation
 ============
 Sign up for a CloudAdmin account, once you register you will recieve a APIKey. With that APIKey you can install our Daemon on each one of your servers by running the following command:
 
+(Curl is required for this)
 bash <(curl -s -L http://bit.ly/cloudadmin-daemon) APIKey
+
+OR
+
+Drop the install.sh script onto your system and execute it.
+
+./install.sh APIKey
 
 Your servers will immediately start reporting into our system.
 
@@ -50,7 +57,6 @@ Tested on the following operating systems:
 | Debian        | wheezy        |
 | Debian        | jessie        |
 | Debian        | stretch       |
-| Debian        | buster        |
 | RHEL          | 6.11          |
 | RHEL          | 7.5           |
 
