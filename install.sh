@@ -51,7 +51,7 @@ elif [[ `yum 2>/dev/null` ]]; then
 
 elif [[ `zypper 2>/dev/null` ]]; then
     # SuSE/openSuSE
-    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar python-setuptools
+    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar python-setuptools bzip2
 elif [[ `pacman 2>/dev/null` ]]; then
     # Arch support
 
