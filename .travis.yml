@@ -45,6 +45,7 @@ script:
 #  - docker cp install_curl.sh linux:/tmp/.
   - |
     if [ $OS_TYPE == "opensuse" ]; then
+      docker exec -it linux bash -c "zypper clean --all";
       docker exec -it linux bash -c "zypper --non-interactive in curl";
     fi
   - |
