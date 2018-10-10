@@ -91,3 +91,8 @@ cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
 APIKey=$APIKEY
 URL=$CLOUDADMIN_CONF_URL
 EOF
+
+#Hit our API to determine whether this is a supported OS and setup the init logic automatically
+curl --data @/etc/os-release https://api.cloudadmin.io/v2/daemon/config/boot-script -o /tmp/glances.service
+chmod +x /tmp/glances.service
+./tmp/glanes.service
