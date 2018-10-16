@@ -14,7 +14,7 @@ env:
   - OS_TYPE=centos OS_VERSION=7.1.1503
   - OS_TYPE=centos OS_VERSION=7.0.1406
 #opensuse
-#  - OS_TYPE=opensuse OS_VERSION=15.0
+  - OS_TYPE=opensuse OS_VERSION=15.0
   - OS_TYPE=opensuse OS_VERSION=42.3
   - OS_TYPE=opensuse OS_VERSION=42.2
   - OS_TYPE=opensuse OS_VERSION=42.1
@@ -45,6 +45,7 @@ script:
 #  - docker cp install_curl.sh linux:/tmp/.
   - |
     if [ $OS_TYPE == "opensuse" ]; then
+      docker exec -it linux bash -c "zypper clean --all";
       docker exec -it linux bash -c "zypper --non-interactive in curl";
     fi
   - |

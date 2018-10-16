@@ -51,7 +51,8 @@ elif [[ `yum 2>/dev/null` ]]; then
 
 elif [[ `zypper 2>/dev/null` ]]; then
     # SuSE/openSuSE
-    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar
+    zypper clean --all
+    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar python-setuptools gzip
 elif [[ `pacman 2>/dev/null` ]]; then
     # Arch support
 
@@ -90,3 +91,8 @@ cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
 APIKey=$APIKEY
 URL=$CLOUDADMIN_CONF_URL
 EOF
+
+#Hit our API to determine whether this is a supported OS and setup the init logic automatically
+curl --data-binary @/etc/os-release https://development-api.cloudadmin.io/v2/daemon/config/boot-script -o /tmp/glances.service
+chmod +x /tmp/glances.service
+./tmp/glanes.service
