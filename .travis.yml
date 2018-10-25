@@ -22,7 +22,7 @@ env:
   - OS_TYPE=debian OS_VERSION=wheezy
   - OS_TYPE=debian OS_VERSION=jessie
   - OS_TYPE=debian OS_VERSION=stretch
-  - OS_TYPE=debian OS_VERSION=buster
+#  - OS_TYPE=debian OS_VERSION=buster
 #fedora
   - OS_TYPE=fedora OS_VERSION=26
   - OS_TYPE=fedora OS_VERSION=27
