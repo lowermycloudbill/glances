@@ -30,6 +30,7 @@ except ImportError:
 else:
     cloud_tag = True
 
+import json
 import threading
 
 from glances.compat import iteritems, to_ascii
@@ -130,11 +131,8 @@ class ThreadAwsEc2Grabber(threading.Thread):
 
     # AWS EC2
     # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
-    AWS_EC2_API_URL = 'http://169.254.169.254/latest/meta-data'
-    AWS_EC2_API_METADATA = {'ami-id': 'ami-id',
-                            'instance-id': 'instance-id',
-                            'instance-type': 'instance-type',
-                            'region': 'placement/availability-zone'}
+    AWS_EC2_API_URL = 'http://169.254.169.254/latest/dynamic/identity/'
+    AWS_EC2_API_METADATA = {'document': 'document'}
 
     def __init__(self):
         """Init the class"""
@@ -164,7 +162,26 @@ class ThreadAwsEc2Grabber(threading.Thread):
                 break
             else:
                 if r.ok:
-                    self._stats[k] = r.content
+                    try:
+                        document = json.loads(r.content)
+                        self._stats['privateIp'] = document['privateIp']
+                        self._stats['devpayProductCodes'] = document['devpayProductCodes']
+                        self._stats['marketplaceProductCodes'] = document['marketplaceProductCodes']
+                        self._stats['version'] = document['version']
+                        self._stats['instanceId'] = document['instanceId']
+                        self._stats['billingProducts'] = document['billingProducts']
+                        self._stats['instanceType'] = document['instanceType']
+                        self._stats['availabilityZone'] = document['availabilityZone']
+                        self._stats['kernelId'] = document['kernelId']
+                        self._stats['ramdiskId'] = document['ramdiskId']
+                        self._stats['accountId'] = document['accountId']
+                        self._stats['architecture'] = document['architecture']
+                        self._stats['imageId'] = document['imageId']
+                        self._stats['pendingTime'] = document['pendingTime']
+                        self._stats['region'] = document['region']
+                    except:
+                        logger.debug('cloud plugin - Cannot decode AWS EC2 API document endpoint')
+                        break
 
         return True
 
