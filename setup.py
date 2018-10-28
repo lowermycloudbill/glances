@@ -23,9 +23,6 @@ with open(os.path.join('glances', '__init__.py'), encoding='utf-8') as f:
 if not version:
     raise RuntimeError('Cannot find Glances version information.')
 
-with open('README.rst', encoding='utf-8') as f:
-    long_description = f.read()
-
 
 def get_data_files():
     data_files = [
@@ -70,7 +67,6 @@ setup(
     name='Glances',
     version=version,
     description="A cross-platform curses-based monitoring tool",
-    long_description=long_description,
     author='Nicolas Hennion',
     author_email='nicolas@nicolargo.com',
     url='https://github.com/nicolargo/glances',
