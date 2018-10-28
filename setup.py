@@ -26,7 +26,7 @@ if not version:
 
 def get_data_files():
     data_files = [
-        ('share/doc/glances', ['AUTHORS', 'COPYING', 'NEWS', 'README.rst',
+        ('share/doc/glances', ['AUTHORS', 'COPYING', 'NEWS', 'README.md',
                                'CONTRIBUTING.md', 'conf/glances.conf']),
         ('share/man/man1', ['docs/man/glances.1'])
     ]
