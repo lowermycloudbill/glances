@@ -131,7 +131,7 @@ class ThreadAwsEc2Grabber(threading.Thread):
 
     # AWS EC2
     # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
-    AWS_EC2_API_URL = 'http://169.254.169.254/latest/dynamic/identity/'
+    AWS_EC2_API_URL = 'http://169.254.169.254/latest/dynamic/instance-identity/'
     AWS_EC2_API_METADATA = {'document': 'document'}
 
     def __init__(self):
