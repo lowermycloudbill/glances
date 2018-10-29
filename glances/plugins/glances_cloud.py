@@ -130,9 +130,30 @@ class ThreadAwsEc2Grabber(threading.Thread):
     """
 
     # AWS EC2
+    AWS = 'aws'
+    AZURE = 'azure'
+    GCP = 'gcp'
+
     # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
-    AWS_EC2_API_URL = 'http://169.254.169.254/latest/dynamic/instance-identity/'
-    AWS_EC2_API_METADATA = {'document': 'document'}
+    AWS_EC2_API_URL = 'http://169.254.169.254/latest/dynamic/instance-identity/document'
+    AWS_EC2_API_URL_CHECK = 'http://169.254.169.254/latest/dynamic/instance-identity/document'
+
+    # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service
+    AZURE_VM_API_URL = 'http://169.254.169.254/metadata/instance?api-version=2017-12-01'
+    AZURE_VM_API_URL_CHECK = 'http://169.254.169.254/metadata/instance?api-version=2017-12-01'
+
+    # https://cloud.google.com/compute/docs/storing-retrieving-metadata#querying
+    GCP_VM_API_URL = 'http://metadata.google.internal/computeMetadata/v1/instance'
+    GCP_VM_API_URL_CHECK = 'http://metadata.google.internal/computeMetadata/v1/instance/id'
+    GCP_VM_API_METADATA = {'cpu-platform': 'cpu-platform',
+                           'description' : 'description',
+                           'hostname' : 'hostname',
+                           'id' : 'id',
+                           'machine-type' : 'machine-type',
+                           'name' : 'name',
+                           'tags' : 'tags',
+                           'zone' : 'zone'
+                           }
 
     def __init__(self):
         """Init the class"""
@@ -152,37 +173,57 @@ class ThreadAwsEc2Grabber(threading.Thread):
             self.stop()
             return False
 
-        for k, v in iteritems(self.AWS_EC2_API_METADATA):
-            r_url = '{}/{}'.format(self.AWS_EC2_API_URL, v)
+        cloud = self.determine_cloud_provider()
+
+        if cloud == self.AWS:
+            r_url = self.AWS_EC2_API_URL
             try:
-                # Local request, a timeout of 3 seconds is OK
                 r = requests.get(r_url, timeout=3)
+                if r.ok:
+                    document = json.loads(r.content)
+                    self._stats['privateIp'] = document['privateIp']
+                    self._stats['devpayProductCodes'] = document['devpayProductCodes']
+                    self._stats['marketplaceProductCodes'] = document['marketplaceProductCodes']
+                    self._stats['version'] = document['version']
+                    self._stats['instanceId'] = document['instanceId']
+                    self._stats['billingProducts'] = document['billingProducts']
+                    self._stats['instanceType'] = document['instanceType']
+                    self._stats['availabilityZone'] = document['availabilityZone']
+                    self._stats['kernelId'] = document['kernelId']
+                    self._stats['ramdiskId'] = document['ramdiskId']
+                    self._stats['accountId'] = document['accountId']
+                    self._stats['architecture'] = document['architecture']
+                    self._stats['imageId'] = document['imageId']
+                    self._stats['pendingTime'] = document['pendingTime']
+                    self._stats['region'] = document['region']
+                    self._stats['type'] = self.AWS
             except Exception as e:
                 logger.debug('cloud plugin - Cannot connect to the AWS EC2 API {}: {}'.format(r_url, e))
-                break
-            else:
+        elif cloud == self.AZURE:
+            r_url = self.AZURE_VM_API_URL
+            try:
+                headers = {}
+                headers['Metadata'] = "true"
+                r = requests.get(r_url, headers=headers, timeout=3)
                 if r.ok:
-                    try:
-                        document = json.loads(r.content)
-                        self._stats['privateIp'] = document['privateIp']
-                        self._stats['devpayProductCodes'] = document['devpayProductCodes']
-                        self._stats['marketplaceProductCodes'] = document['marketplaceProductCodes']
-                        self._stats['version'] = document['version']
-                        self._stats['instanceId'] = document['instanceId']
-                        self._stats['billingProducts'] = document['billingProducts']
-                        self._stats['instanceType'] = document['instanceType']
-                        self._stats['availabilityZone'] = document['availabilityZone']
-                        self._stats['kernelId'] = document['kernelId']
-                        self._stats['ramdiskId'] = document['ramdiskId']
-                        self._stats['accountId'] = document['accountId']
-                        self._stats['architecture'] = document['architecture']
-                        self._stats['imageId'] = document['imageId']
-                        self._stats['pendingTime'] = document['pendingTime']
-                        self._stats['region'] = document['region']
-                        self._stats['type'] = 'aws'
-                    except:
-                        logger.debug('cloud plugin - Cannot decode AWS EC2 API document endpoint')
-                        break
+                    document = json.loads(r.content)
+                    self._stats['compute'] = document['compute']
+                    self._stats['network'] = document['network']
+                    self._stats['type'] = self.AZURE
+            except Exception as e:
+                logger.debug('cloud plugin - Cannot connect to the AZURE VM API {}: {}'.format(r_url, e))
+        elif cloud == self.GCP:
+            for k, v in iteritems(self.GCP_VM_API_METADATA):
+                r_url = '{}/{}'.format(self.GCP_VM_API_URL, v)
+                try:
+                    headers = {}
+                    headers['Metadata-Flavor'] = "Google"
+                    # Local request, a timeout of 3 seconds is OK
+                    r = requests.get(r_url, headers=headers, timeout=3)
+                    if r.ok:
+                        self._stats[k] = r.content
+                except Exception as e:
+                    logger.debug('cloud plugin - Cannot connect to the GCP VM API {}: {}'.format(r_url, e))
 
         return True
 
@@ -204,3 +245,20 @@ class ThreadAwsEc2Grabber(threading.Thread):
     def stopped(self):
         """Return True is the thread is stopped"""
         return self._stopper.isSet()
+
+    def determine_cloud_provider(self):
+        for url in dict(self.AWS_EC2_API_URL_CHECK, self.AZURE_VM_API_URL_CHECK, self.GCP_VM_API_URL_CHECK):
+            headers = {}
+            if url == self.AZURE_VM_API_URL_CHECK:
+                headers['Metadata'] = "true"
+            elif url == self.GCP_VM_API_URL_CHECK:
+                headers['Metadata-Flavor'] = "Google"
+            r = requests.get(url, headers=headers)
+            if r.ok:
+                if url == self.AWS_EC2_API_URL_CHECK:
+                    return self.AWS
+                elif url == self.AZURE_VM_API_METADATA:
+                    return self.AZURE
+                elif url == self.GCP_VM_API_URL_CHECK:
+                    return self.GCP
+        return None
