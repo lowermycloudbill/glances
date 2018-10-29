@@ -179,6 +179,7 @@ class ThreadAwsEc2Grabber(threading.Thread):
                         self._stats['imageId'] = document['imageId']
                         self._stats['pendingTime'] = document['pendingTime']
                         self._stats['region'] = document['region']
+                        self._stats['type'] = 'aws'
                     except:
                         logger.debug('cloud plugin - Cannot decode AWS EC2 API document endpoint')
                         break
