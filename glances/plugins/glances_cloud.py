@@ -213,6 +213,7 @@ class ThreadAwsEc2Grabber(threading.Thread):
             except Exception as e:
                 logger.debug('cloud plugin - Cannot connect to the AZURE VM API {}: {}'.format(r_url, e))
         elif cloud == self.GCP:
+            self._stats['type'] = self.GCP
             for k, v in iteritems(self.GCP_VM_API_METADATA):
                 r_url = '{}/{}'.format(self.GCP_VM_API_URL, v)
                 try:
@@ -224,6 +225,7 @@ class ThreadAwsEc2Grabber(threading.Thread):
                         self._stats[k] = r.content
                 except Exception as e:
                     logger.debug('cloud plugin - Cannot connect to the GCP VM API {}: {}'.format(r_url, e))
+
 
         return True
 
