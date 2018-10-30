@@ -247,7 +247,7 @@ class ThreadAwsEc2Grabber(threading.Thread):
         return self._stopper.isSet()
 
     def determine_cloud_provider(self):
-        for url in dict(self.AWS_EC2_API_URL_CHECK, self.AZURE_VM_API_URL_CHECK, self.GCP_VM_API_URL_CHECK):
+        for url in [self.AWS_EC2_API_URL_CHECK, self.AZURE_VM_API_URL_CHECK, self.GCP_VM_API_URL_CHECK]:
             headers = {}
             if url == self.AZURE_VM_API_URL_CHECK:
                 headers['Metadata'] = "true"
@@ -257,7 +257,7 @@ class ThreadAwsEc2Grabber(threading.Thread):
             if r.ok:
                 if url == self.AWS_EC2_API_URL_CHECK:
                     return self.AWS
-                elif url == self.AZURE_VM_API_METADATA:
+                elif url == self.AZURE_VM_API_URL_CHECK:
                     return self.AZURE
                 elif url == self.GCP_VM_API_URL_CHECK:
                     return self.GCP
