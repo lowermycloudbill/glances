@@ -81,5 +81,5 @@ class Export(GlancesExportBulk):
         f.close()
         os._exit(0)
       else:
-        r = requests.post(self.http_endpoint, data=json.dumps(self.bulk), headers=self.headers)
+        r = requests.post(self.http_endpoint, json=self.bulk, headers=self.headers)
       self.bulk = {}
