@@ -1,9 +1,7 @@
-===============================
-Glances - An eye on your system
-===============================
 
-Summary
-=======
+# Glances - An eye on your system
+
+## Summary
 
 **Glances** is a cross-platform monitoring tool which aims to present a
 maximum of information in a minimum of space through a curses or Web
@@ -13,8 +11,8 @@ depending on the user interface size.
 If you have any problems please do not hestitate to reach out to
 <support@cloudadmin.io>
 
-Installation
-============
+## Installation
+
 Sign up for a CloudAdmin account, once you register you will recieve a APIKey. With that APIKey you can install our Daemon on each one of your servers by running the following command:
 
 (Curl is required for this)
@@ -34,8 +32,7 @@ PLACEHOLDER
 To setup systemd:
 PLACEHOLDER
 
-OS Support
-======
+## OS Support
 
 Tested on the following operating systems:
 
@@ -62,13 +59,13 @@ Tested on the following operating systems:
 | RHEL          | 7.5           |
 
 
-Author
-======
+## Author
+
 CloudAdmin.io <support@cloudadmin.io>
 
 
-Pawel
-=======
+## Pawel
+
 curl is required to start the installation
 
 glances --disable-irix --disable-wifi --disable-sensors --disable-ports --disable-hddtemp --disable-alert --disable-bg --disable-process --disable-folders --disable-cpu --disable-memswap --disable-docker --export-lmcb hello
@@ -88,27 +85,23 @@ subscription-manager repos --list
 
 subscription-manager repos --enable=rhel-atomic-host-rpms
 
-Tests
-======
+## Tests
 
 define environment variable TEST
 Install through curl above
 Run suite of tests
 
-Changes
-======
+## Changes
 
 During boot there is a random sleep, which helps distribute load to our backend.
 Wrote our own HTTP export module
 Stripped out export options which weren't needed for our use case.
 
-Source
-======
+## Source
 
 Please note that this is a fork of https://github.com/nicolargo/glances
 
-License
-=======
+## License
 
 LGPLv3. See ``COPYING`` for more details.
 
