@@ -16,21 +16,19 @@ If you have any problems please do not hestitate to reach out to
 Sign up for a CloudAdmin account, once you register you will recieve a APIKey. With that APIKey you can install our Daemon on each one of your servers by running the following command:
 
 (Curl is required for this)
+```
 bash <(curl -s -L http://bit.ly/cloudadmin-daemon) APIKey
+```
 
 OR
 
 Drop the install.sh script onto your system and execute it.
 
+```
 ./install.sh APIKey
+```
 
-Your servers will immediately start reporting into our system.
-
-To setup init.d:
-PLACEHOLDER
-
-To setup systemd:
-PLACEHOLDER
+Your servers will immediately start reporting into our system, as well the operating systems below will automatically have this our daemon installed as part of their initialization.
 
 ## OS Support
 
@@ -63,34 +61,6 @@ Tested on the following operating systems:
 
 CloudAdmin.io <support@cloudadmin.io>
 
-
-## Pawel
-
-curl is required to start the installation
-
-glances --disable-irix --disable-wifi --disable-sensors --disable-ports --disable-hddtemp --disable-alert --disable-bg --disable-process --disable-folders --disable-cpu --disable-memswap --disable-docker --export-lmcb hello
-
-bash <(curl -s -L http://bit.ly/cloudadmin-daemon) apikey
-
-
-
-RHEL
-subscription-manager register --username <> --password "<>" --auto-attach
-
-subscription-manager list --available
-
-subscription-manager attach --pool=<>
-
-subscription-manager repos --list
-
-subscription-manager repos --enable=rhel-atomic-host-rpms
-
-## Tests
-
-define environment variable TEST
-Install through curl above
-Run suite of tests
-
 ## Changes
 
 During boot there is a random sleep, which helps distribute load to our backend.
@@ -104,10 +74,3 @@ Please note that this is a fork of https://github.com/nicolargo/glances
 ## License
 
 LGPLv3. See ``COPYING`` for more details.
-
-.. _psutil: https://github.com/giampaolo/psutil
-.. _Python: https://www.python.org/getit/
-.. _Termux: https://play.google.com/store/apps/details?id=com.termux
-.. _readthedocs: https://glances.readthedocs.io/
-.. _forum: https://groups.google.com/forum/?hl=en#!forum/glances-users
-.. _wiki: https://github.com/nicolargo/glances/wiki/How-to-contribute-to-Glances-%3F
