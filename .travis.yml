@@ -27,6 +27,10 @@ env:
   - OS_TYPE=fedora OS_VERSION=26
   - OS_TYPE=fedora OS_VERSION=27
   - OS_TYPE=fedora OS_VERSION=28
+#AWS Linux
+#  - OS_TYPE= OS_VERSION=2018.03
+#  - OS_TYPE= OS_VERSION=2
+
 #kali
 #windows
 

@@ -34,30 +34,33 @@ if [[ `apt-get 2>/dev/null` ]]; then
     do_with_root apt-get -y --force-yes update
 
     # Install prerequirements
-    do_with_root apt-get install -y --force-yes python-pip python-dev gcc lsb-release wget curl tar
+    do_with_root apt-get install -y --force-yes python-pip python-dev gcc lsb-release wget curl tar ca-certificates
+    # Update certificates
+    do_with_root update-ca-certificates --fresh
 
 elif [[ `dnf 2>/dev/null` ]]; then
     # Fedora
 
     # Install prerequirements
-    do_with_root dnf -y install python-pip python-devel gcc wget curl tar --nogpgcheck
+    do_with_root dnf -y install python-pip python-devel gcc wget curl tar ca-certificates --nogpgcheck
+
 elif [[ `yum 2>/dev/null` ]]; then
     # Redhat/CentOS/SL
 
     # Install prerequirements
-    do_with_root yum -y install wget python-devel python-setuptools gcc wget curl tar
+    do_with_root yum -y install wget python-devel python-setuptools gcc wget curl tar ca-certificates
     do_with_root easy_install pip
     do_with_root pip install -U pip setuptools
 
 elif [[ `zypper 2>/dev/null` ]]; then
     # SuSE/openSuSE
     zypper clean --all
-    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar python-setuptools gzip
+    zypper --non-interactive in python-pip python-devel gcc python-curses wget curl tar python-setuptools gzip ca-certificates
 elif [[ `pacman 2>/dev/null` ]]; then
     # Arch support
 
     # Headers not needed for Arch, shipped with regular python packages
-    do_with_root pacman -S python-pip wget curl tar
+    do_with_root pacman -S python-pip wget curl tar ca-certificates
 else
     # Unsupported system
     echo "Sorry, GlancesAutoInstall script is not compliant with your system."
@@ -68,10 +71,10 @@ shopt -u nocasematch
 
 
 CLOUDADMIN_FILE_NAME="cloudadmin.conf"
-CLOUDADMIN_CONF_DIR="/etc/cloudadmin/"
+CLOUDADMIN_CONF_DIR="/etc/cloudadmin"
 CLOUDADMIN_CONF_URL="https://metrics.cloudadmin.io"
-GLANCES_DIR="glances-0.3.4"
-GLANCES_TARBALL_NAME="glances-0.3.4.tar.gz"
+GLANCES_DIR="glances-0.5.6"
+GLANCES_TARBALL_NAME="glances-0.5.6.tar.gz"
 GLANCES_TARBALL_URL="https://s3-us-west-2.amazonaws.com/cloudadmin.io/$GLANCES_TARBALL_NAME"
 
 SYSTEMD_FILE_NAME="glances.service"
@@ -85,14 +88,11 @@ do_with_root python /tmp/$GLANCES_DIR/setup.py install
 #create conf directory for cloudadmin.conf
 do_with_root mkdir -p $CLOUDADMIN_CONF_DIR
 
-#dump the config
-cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
-[CloudAdmin]
-APIKey=$APIKEY
-URL=$CLOUDADMIN_CONF_URL
-EOF
+do_with_root echo "[CloudAdmin]" >> $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
+do_with_root echo "APIKey=$APIKEY" >> $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
+do_with_root echo "URL=$CLOUDADMIN_CONF_URL" >> $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
 
 #Hit our API to determine whether this is a supported OS and setup the init logic automatically
-curl --form "file=@/etc/os-release" https://api.cloudadmin.io/v2/daemon/config/boot-script -o /tmp/glances.service
-chmod +x /tmp/glances.service
-/tmp/glances.service
+do_with_root curl --form "file=@/etc/os-release" https://api.cloudadmin.io/v2/daemon/config/boot-script -o /tmp/glances.service
+do_with_root chmod +x /tmp/glances.service
+do_with_root /tmp/glances.service
