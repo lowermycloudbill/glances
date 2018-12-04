@@ -85,14 +85,14 @@ do_with_root python /tmp/$GLANCES_DIR/setup.py install
 #create conf directory for cloudadmin.conf
 do_with_root mkdir -p $CLOUDADMIN_CONF_DIR
 
-#dump the config
-cat <<EOF > $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
-[CloudAdmin]
-APIKey=$APIKEY
-URL=$CLOUDADMIN_CONF_URL
-EOF
+#blow away the config file
+do_with_root rm -f $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
+do_with_root echo "[CloudAdmin]" >> $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
+do_with_root echo "APIKey=$APIKEY" >> $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
+do_with_root echo "URL=$CLOUDADMIN_CONF_URL" >> $CLOUDADMIN_CONF_DIR/$CLOUDADMIN_FILE_NAME
 
 #Hit our API to determine whether this is a supported OS and setup the init logic automatically
-curl --form "file=@/etc/os-release" https://api.cloudadmin.io/v2/daemon/config/boot-script -o /tmp/glances.service
-chmod +x /tmp/glances.service
-/tmp/glances.service
+do_with_root curl --form "file=@/etc/os-release" https://api.cloudadmin.io/v2/daemon/config/boot-script -o /tmp/glances.service
+do_with_root curl --form "file=@/etc/os-release" https://api.cloudadmin.io/v2/daemon/config/install-boot-script -o /tmp/install-boot
+do_with_root chmod +x /tmp/install-boot
+do_with_root ./tmp/install-boot
