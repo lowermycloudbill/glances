@@ -2,7 +2,7 @@
 #
 # This file is part of Glances.
 #
-# Copyright (C) 2017 Nicolargo <nicolas@nicolargo.com>
+# Copyright (C) 2018 Nicolargo <nicolas@nicolargo.com>
 #
 # Glances is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -119,7 +119,8 @@ class GlancesFilter(object):
 
         if self.filter_key is None:
             # Apply filter on command line and process name
-            return self._is_process_filtered(process, key='cmdline') and self._is_process_filtered(process, key='name')
+            return self._is_process_filtered(process, key='name') or \
+                self._is_process_filtered(process, key='cmdline')
         else:
             # Apply filter on <key>
             return self._is_process_filtered(process)
@@ -140,6 +141,9 @@ class GlancesFilter(object):
             return False
         try:
             return self._filter_re.match(value) is None
-        except AttributeError:
-            #  Filter processes crashs with a bad regular expression pattern (issue #665)
+        except (AttributeError, TypeError):
+            # AttributeError
+            # Filter processes crashs with a bad regular expression pattern (issue #665)
+            # TypeError
+            # Filter processes crashs if value is None (issue #1105)
             return False
